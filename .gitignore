@@ -1,0 +1,23 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.log
+TestResults/
+publish/
+
+# Built web app (produced by npm run build in src/Desk.Web)
+src/Desk.Api/wwwroot/
+node_modules/
+
+# Never commit data or secrets (they live in C:\DeskData)
+*.bak
+*.pfx
+*.mdf
+*.ldf
+secrets/
+.env

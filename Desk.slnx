@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Desk.Api/Desk.Api.csproj" />
+    <Project Path="src/Desk.Core/Desk.Core.csproj" />
+    <Project Path="src/Desk.Scheduler/Desk.Scheduler.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Desk.Api.Tests/Desk.Api.Tests.csproj" />
+  </Folder>
+</Solution>
