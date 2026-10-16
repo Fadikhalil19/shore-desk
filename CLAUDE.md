@@ -96,8 +96,9 @@ and inventory. Fadi's decisions (2026-10-16):
 - Scheduler RedirectAllTo = fadikhalil@ (pre-live rule). Mode Outbox -> C:\DeskData\outbox until desk@ + mailer app exist.
 - Security note for the contract app (not changed from here): EF SqlServer pulls System.Security.Cryptography.Pkcs
   9.0.11 (known high-severity advisory); Desk pins 10.0.13 in Desk.Core.csproj. Contract app probably needs the same.
-- NOT done in phase 1: GitHub remote (Fadi to create private repo), Entra app/groups, Cloudflare route + Access app,
-  service install, backup task, location spots, SMH/OVH addresses.
+- GitHub remote connected and pushed 2026-10-16: https://github.com/Fadikhalil19/shore-desk.
+- NOT done in phase 1: Entra app/groups, Cloudflare route + Access app, service install, backup task, location spots,
+  SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
 - Gotcha: Git Bash heredocs on this server mangle backslashes - write JSON/PS1 with the Write tool.
