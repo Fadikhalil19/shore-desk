@@ -76,6 +76,9 @@ public class SignInRulesTests
     [InlineData("https://evil.example", "/")]
     [InlineData("//evil.example", "/")]
     [InlineData("/\\evil.example", "/")]
+    [InlineData("/\t/evil.example", "/")]
+    [InlineData("/\n/evil.example", "/")]
+    [InlineData("/ /evil.example", "/")]
     public void Return_address_after_sign_in_stays_on_this_site(string? input, string expected) =>
         Assert.Equal(expected, AuthEndpoints.SafeLocal(input));
 }

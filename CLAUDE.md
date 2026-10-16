@@ -1,7 +1,8 @@
 # Shore Desk app (desk.shorehotelapps.com) - project brief
 
 Claude builds the code; Fadi Khalil (fadikhalil@shorehotel.com) reviews, deploys and owns it. Fadi is not a developer.
-Started 2026-10-16 from the contract-app session. NOTHING BUILT YET - next step = Fadi approves the plan, then Phase 1.
+Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("start phase 1"). PHASE 1 CODE BUILT 2026-10-16
+(see "Phase 1 status" below); waiting on Fadi's setup steps before it can go live.
 
 ## Source docs (Claude Docs; read with the Claude Docs connector, never web-fetch)
 - PLAN (the spec, approve before building): https://claude.ai/code/artifact/03f4bee4-f9c8-4f8f-aaa9-05fa92900d11
@@ -70,3 +71,31 @@ and inventory. Fadi's decisions (2026-10-16):
 - Risky operations: say what could go wrong, keep a rollback, verify afterwards. Label prices/limits from memory
   "approximate". Never paste secrets into chat. PowerShell 5.1: keep scripts ASCII, write files UTF-8.
 - Incident data is sensitive (injuries, DOB, addresses): test with made-up data, never real MSShift records in Git.
+
+## Phase 1 status (built 2026-10-16)
+- Layout: src/Desk.Core (EF model, migrations in Data/Migrations, Access/Modules.cs = the 18 module keys incl. 2
+  sensitive ones, Access/AccessRules.cs = the access rules), src/Desk.Api (minimal APIs, Auth/, Endpoints/),
+  src/Desk.Scheduler (heartbeat + first sign-in email, Outbox mode), src/Desk.Web (React; npm run build -> Desk.Api/wwwroot),
+  tests/Desk.Api.Tests (xUnit; ApiTests run the real app on a temp SQL DB DeskTest_* with a header-based test sign-in).
+  Run `dotnet test Desk.slnx`. EF: `dotnet ef ... --project src/Desk.Core --startup-project src/Desk.Api`
+  (DesignTimeFactory, so ef never needs the secret).
+- ACCESS RULES: DESK-Admins = Manage everything. Otherwise per module: a personal setting (UserAccess row) REPLACES the
+  department default (DepartmentAccess row) for that module; none -> no access. Limits: hotel (null = all) and, for
+  department-split modules (it-tickets, inventory), All / Own / Specific department. New module endpoints use
+  .RequireModule(Modules.X, AccessLevel.Y) and check EffectiveAccess.Allows(level, hotelId, departmentId) per record.
+- DB "Desk" CREATED 2026-10-16 on localhost\SQLEXPRESS (migration Initial applied by Claude's account). Seeded lists +
+  cleanup notes: docs/phase1-lists.md. C:\DeskData\{files,secrets,keys,status,outbox,backup} created.
+- Port 5444 (contract app 5443). Cookie "desk", 12 h. Cert CN=desk.shorehotelapps.com (made by Install-Services).
+- AzureAd:ClientId and App:Groups (Users/Admins) are EMPTY in appsettings.json until Fadi creates the Entra app + groups
+  -> the app refuses everyone until then (fail closed). Then: Set-EntraSecret.ps1 -> C:\DeskData\secrets.
+- Scripts: Publish.ps1 (tests, web build, `ef database update`, publish to C:\DeskApp, restart), Install-Services.ps1
+  (ADMIN, once: creates local svc-desk, ACLs, cert, SQL login with db_datareader/writer on Desk only, services
+  ShoreDeskWeb/ShoreDeskScheduler, operator start/stop rights), Backup-App.ps1 + Register-BackupTask.ps1 (task
+  "Shore Desk Backup" 2:30 am -> \10.1.11.243\d$\Backup\shoreapps\desk, 14 days; failure email only once a desk
+  mailer exists, else App health shows it). Separate from the contract app's backup on purpose.
+- Scheduler RedirectAllTo = fadikhalil@ (pre-live rule). Mode Outbox -> C:\DeskData\outbox until desk@ + mailer app exist.
+- Security note for the contract app (not changed from here): EF SqlServer pulls System.Security.Cryptography.Pkcs
+  9.0.11 (known high-severity advisory); Desk pins 10.0.13 in Desk.Core.csproj. Contract app probably needs the same.
+- NOT done in phase 1: GitHub remote (Fadi to create private repo), Entra app/groups, Cloudflare route + Access app,
+  service install, backup task, location spots, SMH/OVH addresses.
+- Gotcha: Git Bash heredocs on this server mangle backslashes - write JSON/PS1 with the Write tool.

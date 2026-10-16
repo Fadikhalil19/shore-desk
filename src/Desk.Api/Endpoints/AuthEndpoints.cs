@@ -31,8 +31,11 @@ public static class AuthEndpoints
             .AllowAnonymous();
     }
 
+    // Browsers drop tabs and line breaks from addresses ("/\t/evil" becomes "//evil"),
+    // so any control or space character means the address is refused.
     public static string SafeLocal(string? url) =>
-        !string.IsNullOrEmpty(url) && url.StartsWith('/') && !url.StartsWith("//") && !url.StartsWith("/\\") ? url : "/";
+        !string.IsNullOrEmpty(url) && url.StartsWith('/') && !url.StartsWith("//") && !url.StartsWith("/\\")
+        && !url.Any(c => char.IsControl(c) || char.IsWhiteSpace(c)) ? url : "/";
 
     static IResult Page(string title, string message, string link, string linkText) => Results.Content(
         $$"""
