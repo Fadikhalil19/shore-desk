@@ -91,7 +91,7 @@ and inventory. Fadi's decisions (2026-10-16):
 - Scripts: Publish.ps1 (tests, web build, `ef database update`, publish to C:\DeskApp, restart), Install-Services.ps1
   (ADMIN, once: creates local svc-desk, ACLs, cert, SQL login with db_datareader/writer on Desk only, services
   ShoreDeskWeb/ShoreDeskScheduler, operator start/stop rights), Backup-App.ps1 + Register-BackupTask.ps1 (task
-  "Shore Desk Backup" 2:30 am -> \10.1.11.243\d$\Backup\shoreapps\desk, 14 days; failure email only once a desk
+  "Shore Desk Backup" 2:30 am -> \\10.1.11.243\d$\Backup\shoreapps\desk, 14 days; failure email only once a desk
   mailer exists, else App health shows it). Separate from the contract app's backup on purpose.
 - Scheduler RedirectAllTo = fadikhalil@ (pre-live rule). Mode Outbox -> C:\DeskData\outbox until desk@ + mailer app exist.
 - Security note for the contract app (not changed from here): EF SqlServer pulls System.Security.Cryptography.Pkcs
