@@ -96,10 +96,12 @@ try {
         'Restore: RESTORE DATABASE Desk FROM DISK=... WITH REPLACE, then copy files\ back to C:\DeskData\files.'
     ) | Set-Content (Join-Path $target 'manifest.txt') -Encoding UTF8
     Log ("copied: Desk.bak + {0} files ({1:N1} MB)" -f $srcFiles.Count, $srcMb)
-    Remove-Item $bak -Force
 } catch {
     $problems.Add($_.Exception.Message)
     Log "FAILED: $($_.Exception.Message)"
+} finally {
+    # Never leave a full copy of the database lying in the staging folder, even after a failure.
+    if (Test-Path $bak) { Remove-Item $bak -Force -ErrorAction SilentlyContinue }
 }
 
 # 4. Retention (only folders this script made: names like 2026-10-17_0230)

@@ -41,6 +41,14 @@ if ($LASTEXITCODE -ne 0) { throw 'Scheduler publish failed.' }
 $installed = $services | Where-Object { Get-Service $_ -ErrorAction SilentlyContinue }
 foreach ($s in $installed) { Stop-Service $s -ErrorAction Stop; Write-Host "Stopped $s" }
 
+if (-not (Test-Path $target)) {
+    # First publish: don't inherit C:\ (where every signed-in account may write).
+    # Install-Services.ps1 later adds read access for the service account.
+    New-Item -ItemType Directory $target | Out-Null
+    $me = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+    icacls $target /inheritance:r /grant:r "${me}:(OI)(CI)F" 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Could not lock down $target." }
+}
 foreach ($part in 'api', 'scheduler') {
     New-Item -ItemType Directory -Force "$target\$part" | Out-Null
     robocopy "$staging\$part" "$target\$part" /MIR /NFL /NDL /NJH /NJS /NP | Out-Null

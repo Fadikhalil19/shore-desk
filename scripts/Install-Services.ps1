@@ -88,8 +88,14 @@ Step 2 'Folder permissions'
 foreach ($d in "$app", "$app\api", "$app\scheduler", "$data\files", "$data\outbox", "$data\keys", "$data\status", "$data\backup", "$data\secrets") {
     New-Item -ItemType Directory -Force -Path $d | Out-Null
 }
+# Both top folders stop inheriting C:\ (where every signed-in account may write) and start from
+# SYSTEM, Administrators and the operator only. Incident data will live here.
+foreach ($top in $app, $data) {
+    icacls $top /inheritance:r /grant:r 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' "${operator}:(OI)(CI)F" /T /C | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Could not lock down $top (icacls $LASTEXITCODE)." }
+}
 # Program folder: operator can update it, service can only read and run it.
-icacls $app /grant "${operator}:(OI)(CI)M" "${svcFull}:(OI)(CI)RX" | Out-Null
+icacls $app /grant "${svcFull}:(OI)(CI)RX" | Out-Null
 # Data folders the services write to.
 foreach ($d in "$data\files", "$data\outbox", "$data\keys", "$data\status") {
     icacls $d /grant "${svcFull}:(OI)(CI)M" | Out-Null
@@ -98,7 +104,7 @@ foreach ($d in "$data\files", "$data\outbox", "$data\keys", "$data\status") {
 icacls "$data\secrets" /grant "${svcFull}:(OI)(CI)R" | Out-Null
 # Top folder: allow the service to see into it (this folder only).
 icacls $data /grant "${svcFull}:(RX)" | Out-Null
-Ok 'program folder read-only for the service; files/outbox/keys/status writable; secrets read-only'
+Ok 'only SYSTEM, Administrators, operator and svc-desk can use the folders; service: program read-only, files/outbox/keys/status writable, secrets read-only'
 
 # ---------------------------------------------------------------------------
 Step 3 'HTTPS certificate for the web service'

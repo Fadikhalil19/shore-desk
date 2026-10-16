@@ -14,6 +14,13 @@ $file = Join-Path $dir 'entra-client-secret.txt'
 
 New-Item -ItemType Directory -Force -Path $dir | Out-Null
 
+# Lock the folder down BEFORE the secret is written: this user, SYSTEM, Administrators
+# (+ read for the service account once it exists).
+$me = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+icacls $dir /inheritance:r /grant:r "${me}:(OI)(CI)F" 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' | Out-Null
+if ($LASTEXITCODE -ne 0) { Write-Host 'Could not lock down the secrets folder. Nothing was saved.' -ForegroundColor Red; exit 1 }
+if (Get-LocalUser svc-desk -ErrorAction SilentlyContinue) { icacls $dir /grant "$env:COMPUTERNAME\svc-desk:(OI)(CI)R" | Out-Null }
+
 $secure = Read-Host -Prompt 'Paste the client secret VALUE (it will not be shown), then press Enter' -AsSecureString
 $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
 try {
@@ -43,11 +50,6 @@ try {
 }
 
 [IO.File]::WriteAllText($file, $secret, (New-Object Text.ASCIIEncoding))
-
-# Lock the folder down: this user, SYSTEM, Administrators (Install-Services adds read for the service).
-$me = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-icacls $dir /inheritance:r /grant:r "${me}:(OI)(CI)F" 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' | Out-Null
-if (Get-LocalUser svc-desk -ErrorAction SilentlyContinue) { icacls $dir /grant "$env:COMPUTERNAME\svc-desk:(OI)(CI)R" | Out-Null }
 
 Write-Host "Secret saved to $file and Microsoft accepted it." -ForegroundColor Green
 $secret = $null
