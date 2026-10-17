@@ -100,7 +100,8 @@ and inventory. Fadi's decisions (2026-10-16):
 - Security note for the contract app (not changed from here): EF SqlServer pulls System.Security.Cryptography.Pkcs
   9.0.11 (known high-severity advisory); Desk pins 10.0.13 in Desk.Core.csproj. Contract app probably needs the same.
 - GitHub remote connected and pushed 2026-10-16: https://github.com/Fadikhalil19/shore-desk.
-- NOT done in phase 1: Cloudflare route + Access app, service install, backup task, location spots,
+- Services ShoreDeskWeb + ShoreDeskScheduler INSTALLED + running 2026-10-16 (health 200, heartbeat ok).
+- NOT done in phase 1: Cloudflare route + Access app, backup task, location spots,
   SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
