@@ -88,7 +88,7 @@ and inventory. Fadi's decisions (2026-10-16):
 - Port 5444 (contract app 5443). Cookie "desk", 12 h. Cert CN=desk.shorehotelapps.com (made by Install-Services).
 - Entra groups DESK-Users + DESK-Admins CREATED 2026-10-16 (Security, assigned; Fadi only member of Admins); their IDs are in
   appsettings.json App:Groups. AzureAd:ClientId still EMPTY until the Entra app is registered -> app refuses everyone (fail closed).
-  -> the app refuses everyone until then (fail closed). Then: Set-EntraSecret.ps1 -> C:\DeskData\secrets.
+  Then: Set-EntraSecret.ps1 -> C:\DeskData\secrets.
 - Scripts: Publish.ps1 (tests, web build, `ef database update`, publish to C:\DeskApp, restart), Install-Services.ps1
   (ADMIN, once: creates local svc-desk, ACLs, cert, SQL login with db_datareader/writer on Desk only, services
   ShoreDeskWeb/ShoreDeskScheduler, operator start/stop rights), Backup-App.ps1 + Register-BackupTask.ps1 (task
