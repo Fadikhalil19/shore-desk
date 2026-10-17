@@ -90,9 +90,15 @@ foreach ($d in "$app", "$app\api", "$app\scheduler", "$data\files", "$data\outbo
 }
 # Both top folders stop inheriting C:\ (where every signed-in account may write) and start from
 # SYSTEM, Administrators and the operator only. Incident data will live here.
+# Lock the top folder only, then make everything inside inherit from it again (/T on the top
+# would strip each FILE to an empty permission list, which even the service cannot read).
 foreach ($top in $app, $data) {
-    icacls $top /inheritance:r /grant:r 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' "${operator}:(OI)(CI)F" /T /C | Out-Null
+    icacls $top /inheritance:r /grant:r 'SYSTEM:(OI)(CI)F' 'Administrators:(OI)(CI)F' "${operator}:(OI)(CI)F" | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Could not lock down $top (icacls $LASTEXITCODE)." }
+    if (Get-ChildItem $top -Force) {
+        icacls "$top\*" /reset /T /C /Q | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "Could not reset permissions inside $top (icacls $LASTEXITCODE)." }
+    }
 }
 # Program folder: operator can update it, service can only read and run it.
 icacls $app /grant "${svcFull}:(OI)(CI)RX" | Out-Null
