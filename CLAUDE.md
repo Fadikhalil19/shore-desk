@@ -86,7 +86,8 @@ and inventory. Fadi's decisions (2026-10-16):
 - DB "Desk" CREATED 2026-10-16 on localhost\SQLEXPRESS (migration Initial applied by Claude's account). Seeded lists +
   cleanup notes: docs/phase1-lists.md. C:\DeskData\{files,secrets,keys,status,outbox,backup} created.
 - Port 5444 (contract app 5443). Cookie "desk", 12 h. Cert CN=desk.shorehotelapps.com (made by Install-Services).
-- AzureAd:ClientId and App:Groups (Users/Admins) are EMPTY in appsettings.json until Fadi creates the Entra app + groups
+- Entra groups DESK-Users + DESK-Admins CREATED 2026-10-16 (Security, assigned; Fadi only member of Admins); their IDs are in
+  appsettings.json App:Groups. AzureAd:ClientId still EMPTY until the Entra app is registered -> app refuses everyone (fail closed).
   -> the app refuses everyone until then (fail closed). Then: Set-EntraSecret.ps1 -> C:\DeskData\secrets.
 - Scripts: Publish.ps1 (tests, web build, `ef database update`, publish to C:\DeskApp, restart), Install-Services.ps1
   (ADMIN, once: creates local svc-desk, ACLs, cert, SQL login with db_datareader/writer on Desk only, services
@@ -97,7 +98,7 @@ and inventory. Fadi's decisions (2026-10-16):
 - Security note for the contract app (not changed from here): EF SqlServer pulls System.Security.Cryptography.Pkcs
   9.0.11 (known high-severity advisory); Desk pins 10.0.13 in Desk.Core.csproj. Contract app probably needs the same.
 - GitHub remote connected and pushed 2026-10-16: https://github.com/Fadikhalil19/shore-desk.
-- NOT done in phase 1: Entra app/groups, Cloudflare route + Access app, service install, backup task, location spots,
+- NOT done in phase 1: Entra app registration, Cloudflare route + Access app, service install, backup task, location spots,
   SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
