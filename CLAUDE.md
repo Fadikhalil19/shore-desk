@@ -87,8 +87,9 @@ and inventory. Fadi's decisions (2026-10-16):
   cleanup notes: docs/phase1-lists.md. C:\DeskData\{files,secrets,keys,status,outbox,backup} created.
 - Port 5444 (contract app 5443). Cookie "desk", 12 h. Cert CN=desk.shorehotelapps.com (made by Install-Services).
 - Entra groups DESK-Users + DESK-Admins CREATED 2026-10-16 (Security, assigned; Fadi only member of Admins); their IDs are in
-  appsettings.json App:Groups. AzureAd:ClientId still EMPTY until the Entra app is registered -> app refuses everyone (fail closed).
-  Then: Set-EntraSecret.ps1 -> C:\DeskData\secrets.
+  appsettings.json App:Groups. Entra app "Shore Desk" REGISTERED 2026-10-16 (single tenant, Web redirects /signin-oidc +
+  /signout-callback-oidc on desk.shorehotelapps.com, groups claim = Security groups, client ID in AzureAd:ClientId).
+  Client secret: Fadi creates it in Certificates & secrets and saves it with Set-EntraSecret.ps1 -> C:\DeskData\secrets.
 - Scripts: Publish.ps1 (tests, web build, `ef database update`, publish to C:\DeskApp, restart), Install-Services.ps1
   (ADMIN, once: creates local svc-desk, ACLs, cert, SQL login with db_datareader/writer on Desk only, services
   ShoreDeskWeb/ShoreDeskScheduler, operator start/stop rights), Backup-App.ps1 + Register-BackupTask.ps1 (task
@@ -98,7 +99,7 @@ and inventory. Fadi's decisions (2026-10-16):
 - Security note for the contract app (not changed from here): EF SqlServer pulls System.Security.Cryptography.Pkcs
   9.0.11 (known high-severity advisory); Desk pins 10.0.13 in Desk.Core.csproj. Contract app probably needs the same.
 - GitHub remote connected and pushed 2026-10-16: https://github.com/Fadikhalil19/shore-desk.
-- NOT done in phase 1: Entra app registration, Cloudflare route + Access app, service install, backup task, location spots,
+- NOT done in phase 1: Entra client secret, Cloudflare route + Access app, service install, backup task, location spots,
   SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
