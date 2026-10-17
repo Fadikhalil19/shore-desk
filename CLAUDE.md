@@ -101,7 +101,10 @@ and inventory. Fadi's decisions (2026-10-16):
   9.0.11 (known high-severity advisory); Desk pins 10.0.13 in Desk.Core.csproj. Contract app probably needs the same.
 - GitHub remote connected and pushed 2026-10-16: https://github.com/Fadikhalil19/shore-desk.
 - Services ShoreDeskWeb + ShoreDeskScheduler INSTALLED + running 2026-10-16 (health 200, heartbeat ok).
-- NOT done in phase 1: Cloudflare route + Access app, backup task, location spots,
+- Cloudflare DONE 2026-10-16: Access app "Shore Desk" (Entra login only, instant auth, 24 h) with reusable policy
+  "Desk users (allow list)" = emails, only fadikhalil@ so far (add officers there; seats shared with contract app);
+  tunnel contracts-server route desk.shorehotelapps.com -> https://localhost:5444, TLS verify off.
+- NOT done in phase 1: backup task, location spots,
   SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
