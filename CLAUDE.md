@@ -120,7 +120,7 @@ and inventory. Fadi's decisions (2026-10-16):
 - Flow: Draft -> AwaitingReview (to the chosen supervisor = Manage in that module+hotel) -> Approved (locked).
   Return needs a note; reopen needs a reason; void needs reason + typed number. A non-admin cannot approve own report.
   Others' reports answer 404. Number = YYYY-NNNN per Pacific year.
-- Files: C:\DeskDatailes\incidents\<id>\<random name>; allow-list of types in Services/FileStore.cs; removal hides.
+- Files: C:\DeskData\files\incidents\<id>\<random name>; allow-list of types in Services/FileStore.cs; removal hides.
 - Pick-lists: ListItems table (ListKeys in Desk.Core/Data/ListItems.cs), Settings > Report lists. Notes and lists still
   to check against MSShift: docs/phase2-lists.md.
 - AppUser.IsAdmin = copy of DESK-Admins at last sign-in (lets admins be listed as supervisors).
