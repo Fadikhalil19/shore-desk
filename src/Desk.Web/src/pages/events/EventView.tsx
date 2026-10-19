@@ -42,6 +42,9 @@ export default function EventView() {
         </div>
         <div className="row no-print">
           {e.can.edit && <Link className="button secondary" to={`/events/${e.id}/edit`}>Change</Link>}
+          {e.can.flag && <button className={e.forHandover ? '' : 'secondary'} aria-pressed={e.forHandover}
+            onClick={() => run(() => api.post(`/api/events/${e.id}/handover`, { flag: !e.forHandover }))}>
+            {e.forHandover ? 'On handover' : 'Flag for handover'}</button>}
           <button className="secondary" onClick={() => window.print()}>Print</button>
         </div>
       </div>

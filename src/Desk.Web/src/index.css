@@ -162,6 +162,8 @@ details summary { cursor: pointer; color: var(--brand); }
 .report-row.prio-High { border-left: 4px solid var(--warn); }
 .reminders h2 { margin: 0; }
 .reminder { border-top: 1px solid var(--line); padding-top: 0.5rem; }
+.note { border-top: 1px solid var(--line); padding: 0.5rem 0; }
+.note:first-of-type { border-top: 0; }
 
 /* Incident reports */
 button.tile { text-align: left; font: inherit; cursor: pointer; align-items: stretch; justify-content: flex-start; }

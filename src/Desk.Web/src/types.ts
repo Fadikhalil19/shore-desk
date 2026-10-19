@@ -153,8 +153,8 @@ export interface Incident extends IncidentSave {
   areaName: string | null; locationName: string | null; writtenById: number; writtenByName: string
   supervisorName: string | null; createdUtc: string; updatedUtc: string; submittedUtc: string | null
   reviewedByName: string | null; reviewedUtc: string | null; reviewNote: string | null
-  voidedUtc: string | null; voidReason: string | null; attachments: Attachment[]; missing: string[]
-  can: { edit: boolean; submit: boolean; review: boolean; reopen: boolean; void: boolean; history: boolean }
+  voidedUtc: string | null; voidReason: string | null; forHandover: boolean; attachments: Attachment[]; missing: string[]
+  can: { edit: boolean; submit: boolean; review: boolean; reopen: boolean; void: boolean; history: boolean; flag: boolean }
 }
 
 export interface IncidentRow {
@@ -181,7 +181,7 @@ export interface EventSave {
 export interface SecurityEvent extends EventSave {
   id: number; categoryName: string; areaName: string | null; locationName: string | null; assignedToName: string | null
   shift: Shift; createdByName: string; createdUtc: string; updatedUtc: string; voidedUtc: string | null
-  voidReason: string | null; can: { edit: boolean; complete: boolean; void: boolean }
+  voidReason: string | null; forHandover: boolean; can: { edit: boolean; complete: boolean; void: boolean; flag: boolean }
 }
 
 export interface EventRow {
@@ -194,4 +194,16 @@ export interface EventPage { total: number; items: EventRow[] }
 export interface Reminder {
   id: number; hotelId: number; title: string; notes: string | null; dueLocal: string; repeatsDaily: boolean
   assignedDepartmentId: number | null; lastDoneBy: string | null; lastDoneUtc: string | null; overdue: boolean
+}
+
+// --- Handover ---
+
+export interface HandoverNote { id: number; text: string; by: string; createdUtc: string; updatedUtc: string; canEdit: boolean }
+export interface HandoverIncident { id: number; number: string; form: IncidentForm; heading: string; type: string | null; occurredLocal: string | null; status: IncidentStatus }
+export interface HandoverEvent { id: number; category: string; detail: string | null; startedLocal: string; completedLocal: string | null; assignedTo: string | null; narrative: string | null }
+export interface Handover {
+  hotelId: number; shiftDate: string; shift: Shift; startLocal: string; endLocal: string
+  previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
+  notes: HandoverNote[]; incidents: HandoverIncident[] | null; events: HandoverEvent[] | null; openEvents: HandoverEvent[] | null
+  reads: { name: string; readUtc: string }[]; readByMe: boolean; canWrite: boolean
 }

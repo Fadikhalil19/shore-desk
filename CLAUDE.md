@@ -130,4 +130,9 @@ and inventory. Fadi's decisions (2026-10-16):
   Open until CompletedLocal set; creator/assignee/manager edit, anyone with Edit completes, manager voids (reason).
   Reminders: daily ones move to next day when done. Event categories = list "event-category" (38, appended to SeedLists).
 - Shared helpers: Endpoints/Shared.cs (PacificNow, Clean, Bad); CurrentUser.LevelAtAsync(module, hotelId).
-- Next in phase 2: handover (+ "flag for handover" on incidents/events), on duty (+ call-outs), safety reports.
+- HANDOVER built 2026-10-19: Desk.Core/Handover (HandoverNote, HandoverRead, HandoverRules: ShiftOf/Window/Previous;
+  Overnight 21-05 belongs to the date it started). /api/handover?hotelId&date&shift: notes + incidents/events with
+  ForHandover in that shift window (each list only if the person may see that module) + open events + read marks.
+  Flag: POST /api/incidents/{id}/handover and /api/events/{id}/handover {flag} (Edit level). Web pages/Handover.tsx.
+  Later modules (keys, found items, call-outs) add their own ForHandover lists here.
+- Next in phase 2: on duty (+ call-outs), safety reports.

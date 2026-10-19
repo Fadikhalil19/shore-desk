@@ -51,6 +51,10 @@ export default function IncidentView() {
         </div>
         <div className="row no-print">
           {r.can.edit && <Link className="button" to={`/incidents/${r.id}/edit`}>Edit</Link>}
+          {r.can.flag && <button className={r.forHandover ? '' : 'secondary'} aria-pressed={r.forHandover}
+            onClick={() => act(() => api.post(`/api/incidents/${r.id}/handover`, { flag: !r.forHandover }),
+              r.forHandover ? 'Removed from the handover.' : 'Flagged for the handover of its shift.')}>
+            {r.forHandover ? 'On handover' : 'Flag for handover'}</button>}
           <button className="secondary" onClick={() => window.print()}>Print</button>
         </div>
       </div>

@@ -43,6 +43,7 @@ const READY: Record<string, string> = {
   'incidents-highlevel': '/incidents?form=HighLevel',
   'incidents-employee': '/incidents?form=EmployeeInjury',
   eventlog: '/events',
+  handover: '/handover',
 }
 
 function Tile({ m }: { m: ModuleAccess }) {
