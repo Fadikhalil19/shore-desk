@@ -89,9 +89,9 @@ export default function IncidentEdit() {
       else reportId = (await api.post<{ id: number }>('/api/incidents', r)).id
       if (andSubmit) {
         try { await api.post(`/api/incidents/${reportId}/submit`) }
-        catch (e) {
+        catch {
           // Saved, but not complete: the report page lists what is missing.
-          navigate(`/incidents/${reportId}`, { state: { message: (e as Error).message } })
+          navigate(`/incidents/${reportId}`, { state: { message: 'Saved as a draft. It can be sent once the items below are filled in.' } })
           return
         }
       }
