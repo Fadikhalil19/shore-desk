@@ -53,6 +53,9 @@ public class SecurityEvent
     public DateTime UpdatedUtc { get; set; }
     public DateTime? VoidedUtc { get; set; }
     public string? VoidReason { get; set; }
+
+    // Shown on the handover of the shift it started in.
+    public bool ForHandover { get; set; }
 }
 
 // A task an officer must not forget ("check the pool gate at 22:00"). Shown on the

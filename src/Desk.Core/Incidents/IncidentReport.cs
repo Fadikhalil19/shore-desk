@@ -66,6 +66,9 @@ public class IncidentReport
     public DateTime? VoidedUtc { get; set; }
     public string? VoidReason { get; set; }
 
+    // Shown on the handover of the shift it happened in.
+    public bool ForHandover { get; set; }
+
     public List<IncidentAttachment> Attachments { get; set; } = [];
 }
 

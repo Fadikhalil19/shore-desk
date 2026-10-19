@@ -20,14 +20,15 @@ public static class EventEndpoints
         int? AssignedDepartmentId, int? AssignedToId, DateTime? StartedLocal, DateTime? CompletedLocal, string? Narrative);
     public record CompleteRequest(DateTime? CompletedLocal);
     public record VoidRequest(string? Reason);
+    public record FlagRequest(bool Flag);
 
-    public record EventPermissions(bool Edit, bool Complete, bool Void);
+    public record EventPermissions(bool Edit, bool Complete, bool Void, bool Flag);
     public record EventDto(int Id, int HotelId, int CategoryId, string CategoryName, string? Detail, int? AreaId, string? AreaName,
         int? LocationId, string? LocationName, string? LocationDetail, string? Room, string? RequestedByType, string? RequestedByName,
         int? RequestedByUserId, int? RequestedByDepartmentId, DateTime RequestedLocal, string? RelatesToType, string? RelatesToName,
         string? RelatesToRoom, Priority Priority, int? AssignedDepartmentId, int? AssignedToId, string? AssignedToName,
         DateTime StartedLocal, DateTime? CompletedLocal, Shift Shift, string? Narrative, string CreatedByName, DateTime CreatedUtc,
-        DateTime UpdatedUtc, DateTime? VoidedUtc, string? VoidReason, EventPermissions Can);
+        DateTime UpdatedUtc, DateTime? VoidedUtc, string? VoidReason, bool ForHandover, EventPermissions Can);
     public record EventRow(int Id, string HotelCode, string CategoryName, string? Detail, string? AreaName, string? LocationName,
         string? Room, Priority Priority, DateTime StartedLocal, DateTime? CompletedLocal, Shift Shift, string? AssignedToName,
         string CreatedByName, string? Narrative, bool Voided);
@@ -49,6 +50,7 @@ public static class EventEndpoints
         g.MapPut("/{id:int}", Update).RequireModule(Modules.EventLog, AccessLevel.Edit);
         g.MapPost("/{id:int}/complete", Complete).RequireModule(Modules.EventLog, AccessLevel.Edit);
         g.MapPost("/{id:int}/void", Void).RequireModule(Modules.EventLog, AccessLevel.Manage);
+        g.MapPost("/{id:int}/handover", Flag).RequireModule(Modules.EventLog, AccessLevel.Edit);
 
         g.MapGet("/reminders", Reminders);
         g.MapPost("/reminders", (ReminderRequest r, [AsParameters] Ctx c, CancellationToken ct) => SaveReminder(null, r, c, ct))
@@ -178,6 +180,19 @@ public static class EventEndpoints
         return Results.Ok();
     }
 
+    // Show (or stop showing) the entry on the handover of the shift it started in.
+    static async Task<IResult> Flag(int id, FlagRequest req, [AsParameters] Ctx c, CancellationToken ct)
+    {
+        var (e, level) = await Load(id, c, ct);
+        if (e is null) return Results.NotFound();
+        if (level < AccessLevel.Edit || e.VoidedUtc is not null) return Bad("You cannot flag this entry.");
+        if (e.ForHandover == req.Flag) return Results.Ok();
+        e.ForHandover = req.Flag;
+        await c.Db.SaveChangesAsync(ct);
+        await c.Log.LogAsync(req.Flag ? "FlagHandover" : "UnflagHandover", Modules.EventLog, "Event", e.Id.ToString(), null, ct);
+        return Results.Ok();
+    }
+
     // --- Reminders ---------------------------------------------------------------
 
     // Open reminders due by the end of today (plus the next 24 hours for planning).
@@ -269,11 +284,12 @@ public static class EventEndpoints
             e.Room, e.RequestedByType, e.RequestedByName, e.RequestedByUserId, e.RequestedByDepartmentId, e.RequestedLocal,
             e.RelatesToType, e.RelatesToName, e.RelatesToRoom, e.Priority, e.AssignedDepartmentId, e.AssignedToId,
             e.AssignedToId is int at ? names.GetValueOrDefault(at) : null, e.StartedLocal, e.CompletedLocal, e.Shift, e.Narrative,
-            names.GetValueOrDefault(e.CreatedById, "?"), e.CreatedUtc, e.UpdatedUtc, e.VoidedUtc, e.VoidReason,
+            names.GetValueOrDefault(e.CreatedById, "?"), e.CreatedUtc, e.UpdatedUtc, e.VoidedUtc, e.VoidReason, e.ForHandover,
             new EventPermissions(
                 EventRules.CanEdit(voided, level, e.CreatedById == uid || e.AssignedToId == uid),
                 EventRules.CanComplete(voided, e.CompletedLocal is null, level),
-                EventRules.CanVoid(voided, level)));
+                EventRules.CanVoid(voided, level),
+                !voided && level >= AccessLevel.Edit));
     }
 
     // Copies the request onto the entry after checking every id it points at.

@@ -2783,6 +2783,9 @@ namespace Desk.Core.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<bool>("ForHandover")
+                        .HasColumnType("bit");
+
                     b.Property<int>("HotelId")
                         .HasColumnType("int");
 
@@ -2877,7 +2880,94 @@ namespace Desk.Core.Data.Migrations
 
                     b.HasIndex("CompletedLocal", "HotelId");
 
+                    b.HasIndex("ForHandover", "StartedLocal");
+
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Desk.Core.Handover.HandoverNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RemovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RemovedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Shift")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateOnly>("ShiftDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("RemovedById");
+
+                    b.HasIndex("HotelId", "ShiftDate", "Shift");
+
+                    b.ToTable("HandoverNotes");
+                });
+
+            modelBuilder.Entity("Desk.Core.Handover.HandoverRead", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReadUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Shift")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateOnly>("ShiftDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("HotelId", "ShiftDate", "Shift", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("HandoverReads");
                 });
 
             modelBuilder.Entity("Desk.Core.Incidents.IncidentAttachment", b =>
@@ -2962,6 +3052,9 @@ namespace Desk.Core.Data.Migrations
                     b.Property<string>("FollowUp")
                         .HasMaxLength(-1)
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ForHandover")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Form")
                         .IsRequired()
@@ -3075,6 +3168,8 @@ namespace Desk.Core.Data.Migrations
                     b.HasIndex("TypeId");
 
                     b.HasIndex("WrittenById");
+
+                    b.HasIndex("ForHandover", "OccurredLocal");
 
                     b.HasIndex("Status", "SupervisorId");
 
@@ -3243,6 +3338,41 @@ namespace Desk.Core.Data.Migrations
                     b.Navigation("Hotel");
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Desk.Core.Handover.HandoverNote", b =>
+                {
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("RemovedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Desk.Core.Handover.HandoverRead", b =>
+                {
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Desk.Core.Incidents.IncidentAttachment", b =>

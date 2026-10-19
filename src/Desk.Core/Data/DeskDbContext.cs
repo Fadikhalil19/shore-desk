@@ -1,4 +1,5 @@
 using Desk.Core.Events;
+using Desk.Core.Handover;
 using Desk.Core.Incidents;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<IncidentAttachment> IncidentAttachments => Set<IncidentAttachment>();
     public DbSet<SecurityEvent> Events => Set<SecurityEvent>();
     public DbSet<EventReminder> EventReminders => Set<EventReminder>();
+    public DbSet<HandoverNote> HandoverNotes => Set<HandoverNote>();
+    public DbSet<HandoverRead> HandoverReads => Set<HandoverRead>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -163,6 +166,23 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.LastDoneById).OnDelete(DeleteBehavior.Restrict);
         });
+
+        m.Entity<HandoverNote>(e =>
+        {
+            e.Property(x => x.Text).HasMaxLength(4000);
+            e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift });
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.RemovedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<HandoverRead>(e =>
+        {
+            e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift, x.UserId }).IsUnique();
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
+        m.Entity<SecurityEvent>().HasIndex(x => new { x.ForHandover, x.StartedLocal });
 
         SeedData.Apply(m);
         SeedLists.Apply(m);

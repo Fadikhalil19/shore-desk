@@ -21,8 +21,9 @@ public static class IncidentEndpoints
         string? Room, string? Narrative, string? FollowUp, IncidentDetails? Details, int? SupervisorId, string? DistributedTo);
     public record NoteRequest(string? Note);
     public record VoidRequest(string? Reason, string? ConfirmNumber);
+    public record FlagRequest(bool Flag);
 
-    public record Permissions(bool Edit, bool Submit, bool Review, bool Reopen, bool Void, bool History);
+    public record Permissions(bool Edit, bool Submit, bool Review, bool Reopen, bool Void, bool History, bool Flag);
     public record AttachmentDto(int Id, string FileName, string ContentType, long SizeBytes, string? Caption,
         string UploadedBy, DateTime UploadedUtc, bool Inline);
     public record IncidentDto(int Id, string Number, IncidentForm Form, string FormName, IncidentStatus Status, int HotelId,
@@ -32,7 +33,7 @@ public static class IncidentEndpoints
         string? Narrative, string? FollowUp, IncidentDetails Details,
         int WrittenById, string WrittenByName, int? SupervisorId, string? SupervisorName, string? DistributedTo,
         DateTime CreatedUtc, DateTime UpdatedUtc, DateTime? SubmittedUtc, string? ReviewedByName, DateTime? ReviewedUtc,
-        string? ReviewNote, DateTime? VoidedUtc, string? VoidReason,
+        string? ReviewNote, DateTime? VoidedUtc, string? VoidReason, bool ForHandover,
         List<AttachmentDto> Attachments, List<string> Missing, Permissions Can);
     public record IncidentRow(int Id, string Number, IncidentForm Form, IncidentStatus Status, string HotelCode, string? TypeName,
         string? Kind, string Heading, DateTime? OccurredLocal, Shift? Shift, string? AreaName, string? LocationName,
@@ -67,6 +68,7 @@ public static class IncidentEndpoints
         g.MapPost("/{id:int}/reopen", Reopen);
         g.MapPost("/{id:int}/void", Void);
         g.MapGet("/{id:int}/history", History);
+        g.MapPost("/{id:int}/handover", Flag);
         g.MapPost("/{id:int}/attachments", Upload);
         g.MapGet("/{id:int}/attachments/{attachmentId:int}", Download);
         g.MapDelete("/{id:int}/attachments/{attachmentId:int}", RemoveAttachment);
@@ -282,6 +284,20 @@ public static class IncidentEndpoints
         return Results.Ok();
     }
 
+    // Show (or stop showing) the report on the handover of the shift it happened in.
+    // Anyone who may write this kind of report may flag it, whatever its status.
+    static async Task<IResult> Flag(int id, FlagRequest req, [AsParameters] Ctx c, CancellationToken ct)
+    {
+        var (r, level) = await Load(id, c, ct);
+        if (r is null) return Results.NotFound();
+        if (level < AccessLevel.Edit || r.Status == IncidentStatus.Voided) return Bad("You cannot flag this report.");
+        if (r.ForHandover == req.Flag) return Results.Ok();
+        r.ForHandover = req.Flag;
+        await c.Db.SaveChangesAsync(ct);
+        await c.Log.LogAsync(req.Flag ? "FlagHandover" : "UnflagHandover", IncidentRules.ModuleFor(r.Form), "IncidentReport", r.Number, null, ct);
+        return Results.Ok();
+    }
+
     // --- Attachments -------------------------------------------------------------
 
     // The form is read by hand (not bound) so no anti-forgery token is expected;
@@ -401,7 +417,7 @@ public static class IncidentEndpoints
             r.WrittenById, names.GetValueOrDefault(r.WrittenById, "?"), r.SupervisorId,
             r.SupervisorId is int s ? names.GetValueOrDefault(s) : null, r.DistributedTo,
             r.CreatedUtc, r.UpdatedUtc, r.SubmittedUtc, r.ReviewedById is int rv ? names.GetValueOrDefault(rv) : null,
-            r.ReviewedUtc, r.ReviewNote, r.VoidedUtc, r.VoidReason,
+            r.ReviewedUtc, r.ReviewNote, r.VoidedUtc, r.VoidReason, r.ForHandover,
             attachments.Select(x => x with { Inline = FileStore.ShowInline(x.ContentType) }).ToList(),
             r.Status == IncidentStatus.Draft ? IncidentRules.MissingForSubmit(r, details) : [],
             new Permissions(
@@ -410,7 +426,8 @@ public static class IncidentEndpoints
                 IncidentRules.CanReview(r.Status, level, isWriter, c.Me.IsAdmin),
                 IncidentRules.CanReopen(r.Status, level),
                 IncidentRules.CanVoid(r.Status, level),
-                level >= AccessLevel.Manage));
+                level >= AccessLevel.Manage,
+                r.Status != IncidentStatus.Voided && level >= AccessLevel.Edit));
     }
 
     static void Apply(IncidentReport r, SaveRequest q, IncidentDetails d)
