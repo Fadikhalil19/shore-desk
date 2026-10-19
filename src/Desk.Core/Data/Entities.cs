@@ -62,6 +62,10 @@ public class AppUser
     public DateTime FirstSeenUtc { get; set; }
     public DateTime LastSeenUtc { get; set; }
 
+    // In DESK-Admins at their last sign-in (Entra decides; this copy lets the app list
+    // admins, e.g. as report supervisors, while they are not signed in).
+    public bool IsAdmin { get; set; }
+
     // First real Microsoft sign-in (people can be added before they ever sign in).
     // The scheduler emails the admins once, then sets FirstSignInNotifiedUtc.
     public DateTime? FirstSignInUtc { get; set; }

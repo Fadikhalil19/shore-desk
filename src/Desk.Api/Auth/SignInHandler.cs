@@ -59,6 +59,7 @@ public static class SignInHandler
             user.LastSeenUtc = now;
             user.FirstSignInUtc ??= now;
         }
+        user.IsAdmin = role == AppRole.Admin;
         await db.SaveChangesAsync();
 
         db.ActivityLog.Add(new ActivityLog

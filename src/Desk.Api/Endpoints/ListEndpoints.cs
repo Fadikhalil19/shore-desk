@@ -12,6 +12,7 @@ public static class ListEndpoints
     public record NameRequest(string Name, bool IsActive = true);
     public record AreaRequest(int? HotelId, string Name, int SortOrder, bool IsActive = true);
     public record LocationRequest(string Name, int SortOrder, bool IsActive = true);
+    public record ListItemRequest(string ListKey, string Name, int SortOrder, bool IsActive = true);
 
     public static void MapListEndpoints(this WebApplication app)
     {
@@ -39,6 +40,29 @@ public static class ListEndpoints
             var areaId = await db.Locations.Where(l => l.Id == id).Select(l => (int?)l.AreaId).FirstOrDefaultAsync(ct);
             return areaId is int a ? await SaveLocation(a, id, r, db, log, ct) : Results.NotFound();
         });
+
+        g.MapPost("/items", (ListItemRequest r, DeskDbContext db, ActivityLogger log, CancellationToken ct) =>
+            SaveItem(null, r, db, log, ct));
+        g.MapPut("/items/{id:int}", (int id, ListItemRequest r, DeskDbContext db, ActivityLogger log, CancellationToken ct) =>
+            SaveItem(id, r, db, log, ct));
+    }
+
+    // Report pick-lists (incident types, injury types, colors, ...). The list of an
+    // existing entry cannot change, so a report never ends up pointing at the wrong kind.
+    static async Task<IResult> SaveItem(int? id, ListItemRequest r, DeskDbContext db, ActivityLogger log, CancellationToken ct)
+    {
+        var name = r.Name?.Trim() ?? "";
+        if (name.Length is 0 or > 200) return Bad("A name (up to 200 characters) is required.");
+        if (!ListKeys.IsKnown(r.ListKey)) return Bad("Unknown list.");
+        var item = id is int i ? await db.ListItems.FindAsync([i], ct) : db.ListItems.Add(new ListItem { ListKey = r.ListKey, Name = name }).Entity;
+        if (item is null) return Results.NotFound();
+        if (item.ListKey != r.ListKey) return Bad("An entry cannot be moved to another list.");
+        if (await db.ListItems.AnyAsync(x => x.ListKey == r.ListKey && x.Name == name && x.Id != id, ct))
+            return Bad($"{name} is already in that list.");
+        item.Name = name; item.SortOrder = r.SortOrder; item.IsActive = r.IsActive;
+        await db.SaveChangesAsync(ct);
+        await log.LogAsync(id is null ? "AddListItem" : "EditListItem", null, "ListItem", item.Id.ToString(), r, ct);
+        return Results.Ok(new { item.Id });
     }
 
     static IResult Bad(string message) => Results.BadRequest(new { message });

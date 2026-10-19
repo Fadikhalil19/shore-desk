@@ -43,6 +43,10 @@ if (!builder.Environment.IsDevelopment() && !testing && OperatingSystem.IsWindow
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CurrentUser>();
 builder.Services.AddScoped<ActivityLogger>();
+builder.Services.AddSingleton<FileStore>();
+// Enums travel as their names ("HighLevel", "AwaitingReview"), not numbers.
+builder.Services.ConfigureHttpJsonOptions(o =>
+    o.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 builder.Services.AddProblemDetails();
 
 builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = appOptions.MaxUploadMb * 1024L * 1024L);
@@ -155,6 +159,7 @@ app.MapMeEndpoints();
 app.MapAdminEndpoints();
 app.MapListEndpoints();
 app.MapActivityEndpoints();
+app.MapIncidentEndpoints();
 
 // Unknown API addresses are a plain 404, never the web page.
 app.MapFallback("/api/{**rest}", () => Results.NotFound());

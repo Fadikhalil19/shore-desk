@@ -25,11 +25,15 @@ public class DeskAppFactory : WebApplicationFactory<Program>
 
     public Guid AdminOid { get; } = Guid.NewGuid();
 
+    // Uploaded files go to a temporary folder, removed with the test database.
+    public string StorageRoot { get; } = Path.Combine(Path.GetTempPath(), $"DeskTestFiles_{Guid.NewGuid():N}");
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
         builder.UseSetting("ConnectionStrings:Desk", ConnectionString);
         builder.UseSetting("AzureAd:ClientId", "00000000-0000-0000-0000-000000000001");
+        builder.UseSetting("App:StorageRoot", StorageRoot);
         builder.ConfigureTestServices(s =>
         {
             s.AddAuthentication(TestAuth.Scheme).AddScheme<AuthenticationSchemeOptions, TestAuth>(TestAuth.Scheme, _ => { });
@@ -74,6 +78,7 @@ public class DeskAppFactory : WebApplicationFactory<Program>
         await base.DisposeAsync();
         await using var db = Db();
         await db.Database.EnsureDeletedAsync();
+        if (Directory.Exists(StorageRoot)) Directory.Delete(StorageRoot, recursive: true);
     }
 }
 
