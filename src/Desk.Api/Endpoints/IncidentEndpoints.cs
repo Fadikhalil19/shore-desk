@@ -5,6 +5,7 @@ using Desk.Core.Data;
 using Desk.Core.Incidents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using static Desk.Api.Endpoints.Shared;
 
 namespace Desk.Api.Endpoints;
 
@@ -43,7 +44,6 @@ public static class IncidentEndpoints
     const int PageSize = 50;
     const int MaxAttachments = 60;
     static readonly string[] IncidentModules = [Modules.Incidents, Modules.IncidentsHighLevel, Modules.IncidentsEmployee];
-    static readonly TimeZoneInfo Pacific = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
 
     public static void MapIncidentEndpoints(this WebApplication app)
     {
@@ -364,18 +364,12 @@ public static class IncidentEndpoints
 
     // --- Helpers -----------------------------------------------------------------
 
-    static IResult Bad(string message) => Results.BadRequest(new { message });
-
     static string Folder(int reportId) => Path.Combine("incidents", reportId.ToString());
 
     static (bool Ok, int? Hotel) Scope(EffectiveAccess a) => (a.Level >= AccessLevel.View, a.HotelId);
 
-    // The person's level for a form at a hotel; None when their hotel limit excludes it.
-    static async Task<AccessLevel> LevelFor(CurrentUser me, IncidentForm form, int hotelId, CancellationToken ct)
-    {
-        var a = await me.AccessToAsync(IncidentRules.ModuleFor(form), ct);
-        return a.Allows(AccessLevel.View, hotelId) ? a.Level : AccessLevel.None;
-    }
+    static Task<AccessLevel> LevelFor(CurrentUser me, IncidentForm form, int hotelId, CancellationToken ct) =>
+        me.LevelAtAsync(IncidentRules.ModuleFor(form), hotelId, ct);
 
     static async Task<(IncidentReport? Report, AccessLevel Level)> Load(int id, Ctx c, CancellationToken ct)
     {
@@ -473,7 +467,7 @@ public static class IncidentEndpoints
                 return "Choose a spot inside the chosen location.";
         }
 
-        var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, Pacific);
+        var now = PacificNow();
         if (q.OccurredLocal > now.AddHours(1) || q.ReportedLocal > now.AddHours(1)) return "A date and time is in the future.";
         if (q.OccurredLocal is { } o && q.ReportedLocal is { } rep && rep < o.AddMinutes(-1))
             return "It cannot have been reported before it happened.";
@@ -527,18 +521,11 @@ public static class IncidentEndpoints
 
     static async Task<string> NextNumber(DeskDbContext db, CancellationToken ct)
     {
-        var prefix = $"{TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, Pacific).Year}-";
+        var prefix = $"{PacificNow().Year}-";
         var last = await db.Incidents.Where(r => r.Number.StartsWith(prefix)).OrderByDescending(r => r.Id)
             .Select(r => r.Number).FirstOrDefaultAsync(ct);
         var n = last is not null && int.TryParse(last[prefix.Length..], out var x) ? x + 1 : 1;
         return $"{prefix}{n:D4}";
-    }
-
-    static string? Clean(string? s, int max)
-    {
-        if (string.IsNullOrWhiteSpace(s)) return null;
-        s = s.Trim();
-        return s.Length > max ? s[..max] : s;
     }
 
     static string SafeName(string fileName)

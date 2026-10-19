@@ -2111,6 +2111,310 @@ namespace Desk.Core.Data.Migrations
                             ListKey = "evidence-status",
                             Name = "Destroyed",
                             SortOrder = 40
+                        },
+                        new
+                        {
+                            Id = 213,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Administrative",
+                            SortOrder = 10
+                        },
+                        new
+                        {
+                            Id = 214,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Alarm Activation",
+                            SortOrder = 20
+                        },
+                        new
+                        {
+                            Id = 215,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Call Off",
+                            SortOrder = 30
+                        },
+                        new
+                        {
+                            Id = 216,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Cybersecurity",
+                            SortOrder = 40
+                        },
+                        new
+                        {
+                            Id = 217,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Desk Duty",
+                            SortOrder = 50
+                        },
+                        new
+                        {
+                            Id = 218,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Door Lock Assist",
+                            SortOrder = 60
+                        },
+                        new
+                        {
+                            Id = 219,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Elevator",
+                            SortOrder = 70
+                        },
+                        new
+                        {
+                            Id = 220,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Employee Assist",
+                            SortOrder = 80
+                        },
+                        new
+                        {
+                            Id = 221,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Escort",
+                            SortOrder = 90
+                        },
+                        new
+                        {
+                            Id = 222,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Eviction",
+                            SortOrder = 100
+                        },
+                        new
+                        {
+                            Id = 223,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Field Contact",
+                            SortOrder = 110
+                        },
+                        new
+                        {
+                            Id = 224,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Fire Command Station",
+                            SortOrder = 120
+                        },
+                        new
+                        {
+                            Id = 225,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Fire Drill",
+                            SortOrder = 130
+                        },
+                        new
+                        {
+                            Id = 226,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Fire Extinguisher",
+                            SortOrder = 140
+                        },
+                        new
+                        {
+                            Id = 227,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Fire Watch",
+                            SortOrder = 150
+                        },
+                        new
+                        {
+                            Id = 228,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Guest Assist",
+                            SortOrder = 160
+                        },
+                        new
+                        {
+                            Id = 229,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Guest Warning",
+                            SortOrder = 170
+                        },
+                        new
+                        {
+                            Id = 230,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Hard Key",
+                            SortOrder = 180
+                        },
+                        new
+                        {
+                            Id = 231,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Hazards",
+                            SortOrder = 190
+                        },
+                        new
+                        {
+                            Id = 232,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Investigation",
+                            SortOrder = 200
+                        },
+                        new
+                        {
+                            Id = 233,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Key Concern - Employee",
+                            SortOrder = 210
+                        },
+                        new
+                        {
+                            Id = 234,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Lock Interrogation",
+                            SortOrder = 220
+                        },
+                        new
+                        {
+                            Id = 235,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Lockout",
+                            SortOrder = 230
+                        },
+                        new
+                        {
+                            Id = 236,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Lost and Found",
+                            SortOrder = 240
+                        },
+                        new
+                        {
+                            Id = 237,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Medical",
+                            SortOrder = 250
+                        },
+                        new
+                        {
+                            Id = 238,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Meeting",
+                            SortOrder = 260
+                        },
+                        new
+                        {
+                            Id = 239,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Monthly Inventory",
+                            SortOrder = 270
+                        },
+                        new
+                        {
+                            Id = 240,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Officer",
+                            SortOrder = 280
+                        },
+                        new
+                        {
+                            Id = 241,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Orange Safety Card",
+                            SortOrder = 290
+                        },
+                        new
+                        {
+                            Id = 242,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Packages and Mail",
+                            SortOrder = 300
+                        },
+                        new
+                        {
+                            Id = 243,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Parking",
+                            SortOrder = 310
+                        },
+                        new
+                        {
+                            Id = 244,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Safe Assist",
+                            SortOrder = 320
+                        },
+                        new
+                        {
+                            Id = 245,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Safety",
+                            SortOrder = 330
+                        },
+                        new
+                        {
+                            Id = 246,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Vendor",
+                            SortOrder = 340
+                        },
+                        new
+                        {
+                            Id = 247,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Water Leak/Plumbing",
+                            SortOrder = 350
+                        },
+                        new
+                        {
+                            Id = 248,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Wellness Check",
+                            SortOrder = 360
+                        },
+                        new
+                        {
+                            Id = 249,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Wheelchair",
+                            SortOrder = 370
+                        },
+                        new
+                        {
+                            Id = 250,
+                            IsActive = true,
+                            ListKey = "event-category",
+                            Name = "Other",
+                            SortOrder = 380
                         });
                 });
 
@@ -2385,6 +2689,195 @@ namespace Desk.Core.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("UserAccess");
+                });
+
+            modelBuilder.Entity("Desk.Core.Events.EventReminder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AssignedDepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ClosedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DueLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LastDoneById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastDoneUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("RepeatsDaily")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedDepartmentId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("LastDoneById");
+
+                    b.HasIndex("ClosedUtc", "DueLocal");
+
+                    b.ToTable("EventReminders");
+                });
+
+            modelBuilder.Entity("Desk.Core.Events.SecurityEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AssignedDepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AssignedToId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Detail")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LocationDetail")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Narrative")
+                        .HasMaxLength(-1)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("RelatesToName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("RelatesToRoom")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("RelatesToType")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int?>("RequestedByDepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestedByName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("RequestedByType")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int?>("RequestedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Room")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Shift")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("StartedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VoidReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("VoidedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("AssignedDepartmentId");
+
+                    b.HasIndex("AssignedToId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("HotelId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("RequestedByDepartmentId");
+
+                    b.HasIndex("RequestedByUserId");
+
+                    b.HasIndex("StartedLocal");
+
+                    b.HasIndex("CompletedLocal", "HotelId");
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Desk.Core.Incidents.IncidentAttachment", b =>
@@ -2662,6 +3155,94 @@ namespace Desk.Core.Data.Migrations
                         .WithMany()
                         .HasForeignKey("LimitHotelId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Desk.Core.Events.EventReminder", b =>
+                {
+                    b.HasOne("Desk.Core.Data.Department", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedDepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("LastDoneById")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Desk.Core.Events.SecurityEvent", b =>
+                {
+                    b.HasOne("Desk.Core.Data.LocationArea", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.Department", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedDepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssignedToId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.ListItem", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.AppUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.Department", null)
+                        .WithMany()
+                        .HasForeignKey("RequestedByDepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("RequestedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Area");
+
+                    b.Navigation("AssignedTo");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Hotel");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Desk.Core.Incidents.IncidentAttachment", b =>

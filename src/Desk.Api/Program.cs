@@ -160,6 +160,7 @@ app.MapAdminEndpoints();
 app.MapListEndpoints();
 app.MapActivityEndpoints();
 app.MapIncidentEndpoints();
+app.MapEventEndpoints();
 
 // Unknown API addresses are a plain 404, never the web page.
 app.MapFallback("/api/{**rest}", () => Results.NotFound());

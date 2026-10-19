@@ -1,3 +1,4 @@
+using Desk.Core.Events;
 using Desk.Core.Incidents;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<ListItem> ListItems => Set<ListItem>();
     public DbSet<IncidentReport> Incidents => Set<IncidentReport>();
     public DbSet<IncidentAttachment> IncidentAttachments => Set<IncidentAttachment>();
+    public DbSet<SecurityEvent> Events => Set<SecurityEvent>();
+    public DbSet<EventReminder> EventReminders => Set<EventReminder>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -124,6 +127,41 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.Property(x => x.Caption).HasMaxLength(400);
             e.HasOne(x => x.UploadedBy).WithMany().HasForeignKey(x => x.UploadedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.RemovedById).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        m.Entity<SecurityEvent>(e =>
+        {
+            e.Property(x => x.Detail).HasMaxLength(200);
+            e.Property(x => x.LocationDetail).HasMaxLength(200);
+            e.Property(x => x.Room).HasMaxLength(40);
+            e.Property(x => x.RequestedByType).HasMaxLength(40);
+            e.Property(x => x.RequestedByName).HasMaxLength(200);
+            e.Property(x => x.RelatesToType).HasMaxLength(40);
+            e.Property(x => x.RelatesToName).HasMaxLength(200);
+            e.Property(x => x.RelatesToRoom).HasMaxLength(40);
+            e.Property(x => x.Narrative).HasMaxLength(-1);
+            e.Property(x => x.VoidReason).HasMaxLength(1000);
+            e.HasIndex(x => x.StartedLocal);
+            e.HasIndex(x => new { x.CompletedLocal, x.HotelId });
+            e.HasOne(x => x.Hotel).WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Area).WithMany().HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Location).WithMany().HasForeignKey(x => x.LocationId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.AssignedTo).WithMany().HasForeignKey(x => x.AssignedToId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.CreatedBy).WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.RequestedByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.RequestedByDepartmentId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.AssignedDepartmentId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<EventReminder>(e =>
+        {
+            e.Property(x => x.Title).HasMaxLength(200);
+            e.Property(x => x.Notes).HasMaxLength(1000);
+            e.HasIndex(x => new { x.ClosedUtc, x.DueLocal });
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.AssignedDepartmentId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.LastDoneById).OnDelete(DeleteBehavior.Restrict);
         });
 
         SeedData.Apply(m);

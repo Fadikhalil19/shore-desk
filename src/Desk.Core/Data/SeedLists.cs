@@ -6,6 +6,7 @@ namespace Desk.Core.Data;
 // and cleaned up. Cleanup notes and lists still to check are in docs/phase2-lists.md.
 // Ids are numbered in the order below and the database is seeded from them, so never
 // insert or remove names here (that would renumber later lists): change lists in the app.
+// A NEW list may be added at the very end (its ids follow the last ones).
 public static class SeedLists
 {
     static readonly (string Key, string[] Names)[] Lists =
@@ -73,6 +74,16 @@ public static class SeedLists
             "Abandoned", "Hit and Run", "Stolen", "Towed", "Vehicle Break-in", "Damaged by Guest", "Damaged by Associate", "Other",
         ]),
         (ListKeys.EvidenceStatus, ["In Storage", "Sent to Claims", "Sent to Attorney", "Destroyed"]),
+        // Phase 2 event log (2026-10-19).
+        (ListKeys.EventCategory,
+        [
+            "Administrative", "Alarm Activation", "Call Off", "Cybersecurity", "Desk Duty", "Door Lock Assist", "Elevator",
+            "Employee Assist", "Escort", "Eviction", "Field Contact", "Fire Command Station", "Fire Drill",
+            "Fire Extinguisher", "Fire Watch", "Guest Assist", "Guest Warning", "Hard Key", "Hazards", "Investigation",
+            "Key Concern - Employee", "Lock Interrogation", "Lockout", "Lost and Found", "Medical", "Meeting",
+            "Monthly Inventory", "Officer", "Orange Safety Card", "Packages and Mail", "Parking", "Safe Assist", "Safety",
+            "Vendor", "Water Leak/Plumbing", "Wellness Check", "Wheelchair", "Other",
+        ]),
     ];
 
     public static void Apply(ModelBuilder m)

@@ -26,6 +26,7 @@ public static class ListKeys
     public const string Color = "color";
     public const string VehicleCircumstance = "vehicle-circumstance";
     public const string EvidenceStatus = "evidence-status";
+    public const string EventCategory = "event-category";
 
     public static readonly IReadOnlyList<ListInfo> All =
     [
@@ -39,6 +40,7 @@ public static class ListKeys
         new(Color, "Colors", "Item and vehicle colors."),
         new(VehicleCircumstance, "Vehicle circumstances", "Vehicle section of a report."),
         new(EvidenceStatus, "Evidence status", "Evidence section of a report."),
+        new(EventCategory, "Event categories", "Category of an event log entry."),
     ];
 
     public static bool IsKnown(string key) => All.Any(l => l.Key == key);

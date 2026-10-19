@@ -45,6 +45,13 @@ public class CurrentUser(IHttpContextAccessor http, DeskDbContext db)
 
     public async Task<EffectiveAccess> AccessToAsync(string module, CancellationToken ct = default) =>
         (await GetAccessAsync(ct)).TryGetValue(module, out var a) ? a : new EffectiveAccess(module, AccessLevel.None, null, null, "None");
+
+    // Their level in a module for one hotel's records; None when their hotel limit excludes that hotel.
+    public async Task<AccessLevel> LevelAtAsync(string module, int hotelId, CancellationToken ct = default)
+    {
+        var a = await AccessToAsync(module, ct);
+        return a.Allows(AccessLevel.View, hotelId) ? a.Level : AccessLevel.None;
+    }
 }
 
 // Reads the stored grants and applies the rules in Desk.Core.Access.AccessRules.
