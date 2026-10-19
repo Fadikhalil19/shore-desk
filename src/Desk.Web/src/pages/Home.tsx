@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useSession } from '../App'
 import type { ModuleAccess } from '../types'
 
@@ -36,7 +37,21 @@ export default function Home() {
   )
 }
 
+// Modules that are built, and where their tile leads.
+const READY: Record<string, string> = {
+  incidents: '/incidents',
+  'incidents-highlevel': '/incidents?form=HighLevel',
+  'incidents-employee': '/incidents?form=EmployeeInjury',
+}
+
 function Tile({ m }: { m: ModuleAccess }) {
+  if (READY[m.key]) return (
+    <Link className="tile" to={READY[m.key]} title={m.description}>
+      <span className="name">{m.name}</span>
+      <span className="muted small">{m.description}</span>
+      <span><span className={`pill lv-${m.level}`}>{m.level}</span></span>
+    </Link>
+  )
   return (
     <div className="tile soon" title={m.description}>
       <span className="name">{m.name}</span>

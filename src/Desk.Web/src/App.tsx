@@ -4,6 +4,9 @@ import { api } from './api'
 import type { Lookups, Me } from './types'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
+import IncidentEdit from './pages/incidents/IncidentEdit'
+import IncidentList from './pages/incidents/IncidentList'
+import IncidentView from './pages/incidents/IncidentView'
 
 interface Session { me: Me; lookups: Lookups; reloadLookups: () => Promise<void> }
 const SessionContext = createContext<Session | null>(null)
@@ -38,6 +41,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/incidents" element={<IncidentList />} />
+            <Route path="/incidents/new" element={<IncidentEdit />} />
+            <Route path="/incidents/:id" element={<IncidentView />} />
+            <Route path="/incidents/:id/edit" element={<IncidentEdit />} />
             <Route path="*" element={<p>Page not found. <Link to="/">Back to the start page</Link></p>} />
           </Routes>
         </main>
@@ -59,6 +66,7 @@ function TopBar() {
       </button>
       <nav id="main-nav" className={open ? 'nav open' : 'nav'} onClick={() => setOpen(false)}>
         <NavLink to="/" end>Home</NavLink>
+        {me.modules.some(m => m.key.startsWith('incidents') && m.level !== 'None') && <NavLink to="/incidents">Incidents</NavLink>}
         {me.isAdmin && <NavLink to="/settings">Settings</NavLink>}
         <span className="who">{me.name}{me.isAdmin ? ' (admin)' : ''}</span>
         <a href="/auth/logout">Sign out</a>

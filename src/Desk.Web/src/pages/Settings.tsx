@@ -4,10 +4,11 @@ import People from './People'
 import DepartmentAccess from './DepartmentAccess'
 import { Areas, Departments, Hotels } from './Lists'
 import { ActivityLog, Health, SignIns } from './Reports'
+import ReportLists from './ReportLists'
 
 const TABS: [string, string][] = [
   ['people', 'People'], ['defaults', 'Department access'], ['hotels', 'Hotels'], ['departments', 'Departments'],
-  ['locations', 'Locations'], ['activity', 'Activity log'], ['signins', 'Sign-ins'], ['health', 'App health'],
+  ['locations', 'Locations'], ['lists', 'Report lists'], ['activity', 'Activity log'], ['signins', 'Sign-ins'], ['health', 'App health'],
 ]
 
 // Admin settings. Nothing is deleted here: list entries are switched off so old
@@ -33,6 +34,7 @@ export default function Settings() {
       {tab === 'hotels' && <Hotels />}
       {tab === 'departments' && <Departments />}
       {tab === 'locations' && <Areas />}
+      {tab === 'lists' && <ReportLists />}
       {tab === 'activity' && <ActivityLog />}
       {tab === 'signins' && <SignIns />}
       {tab === 'health' && <Health />}

@@ -111,3 +111,18 @@ and inventory. Fadi's decisions (2026-10-16):
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
 - Gotcha: Git Bash heredocs on this server mangle backslashes - write JSON/PS1 with the Write tool.
+
+## Phase 2 status (started 2026-10-19)
+- INCIDENT REPORTS built 2026-10-19: one IncidentReport record for all 5 forms (Desk.Core/Incidents). Searchable/report
+  fields are columns; optional sections (people, vehicle, police, injury, items, ...) are IncidentDetails JSON in
+  DetailsJson, re-validated on save (list ids, user/department ids, sizes). IncidentRules = module per form, shift
+  times (5-13 / 13-21 / 21-5), what is missing before submit, who may edit/submit/review/reopen/void.
+- Flow: Draft -> AwaitingReview (to the chosen supervisor = Manage in that module+hotel) -> Approved (locked).
+  Return needs a note; reopen needs a reason; void needs reason + typed number. A non-admin cannot approve own report.
+  Others' reports answer 404. Number = YYYY-NNNN per Pacific year.
+- Files: C:\DeskDatailes\incidents\<id>\<random name>; allow-list of types in Services/FileStore.cs; removal hides.
+- Pick-lists: ListItems table (ListKeys in Desk.Core/Data/ListItems.cs), Settings > Report lists. Notes and lists still
+  to check against MSShift: docs/phase2-lists.md.
+- AppUser.IsAdmin = copy of DESK-Admins at last sign-in (lets admins be listed as supervisors).
+- Web: src/Desk.Web/src/pages/incidents (IncidentList, IncidentEdit, IncidentView, fields, meta). Print view prints the
+  hotel address header. Next in phase 2: event log, handover, on duty (+ call-outs), safety reports.
