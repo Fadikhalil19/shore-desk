@@ -150,6 +150,19 @@ public class EventTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, IAs
     }
 
     [Fact]
+    public async Task Reminders_of_another_hotel_are_out_of_reach()
+    {
+        var r = await app.Admin().PostAsJsonAsync("/api/events/reminders",
+            new EventEndpoints.ReminderRequest(Sho, "SHO only", null, DateTime.Now.AddHours(1), false, null), J);
+        var id = (await r.Content.ReadFromJsonAsync<JsonElement>(J)).GetProperty("id").GetInt32();
+        var (_, smh) = await Officer(hotelLimit: Smh);
+        Assert.Equal(HttpStatusCode.NotFound, (await smh.PostAsync($"/api/events/reminders/{id}/cancel", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await smh.PostAsync($"/api/events/reminders/{id}/done", null)).StatusCode);
+        var list = await smh.GetFromJsonAsync<List<EventEndpoints.ReminderDto>>("/api/events/reminders?all=true", J);
+        Assert.DoesNotContain(list!, x => x.Id == id);
+    }
+
+    [Fact]
     public void Next_due_skips_to_the_future()
     {
         var due = new DateTime(2026, 10, 1, 22, 0, 0);

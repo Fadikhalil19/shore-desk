@@ -237,6 +237,7 @@ public static class EventEndpoints
         var r = await c.Db.EventReminders.FirstOrDefaultAsync(x => x.Id == id && x.ClosedUtc == null, ct);
         if (r is null) return Results.NotFound();
         var level = await c.Me.LevelAtAsync(Modules.EventLog, r.HotelId, ct);
+        if (level < AccessLevel.Edit) return Results.NotFound();
         var uid = (await c.Me.GetUserAsync(ct))?.Id;
         if (level < AccessLevel.Manage && r.CreatedById != uid) return Bad("Only the person who set it, or a manager, can cancel it.");
         r.ClosedUtc = DateTime.UtcNow;

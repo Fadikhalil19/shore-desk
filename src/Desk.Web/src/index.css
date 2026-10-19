@@ -153,6 +153,16 @@ label.field { display: flex; flex-direction: column; gap: 0.25rem; font-weight: 
 .pager { display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem; }
 details summary { cursor: pointer; color: var(--brand); }
 
+/* Event log */
+.pill.prio-Low { background: #eef0f0; color: #5f6b6d; }
+.pill.prio-Medium { background: var(--info-bg); color: #1d4f86; }
+.pill.prio-High { background: var(--warn-bg); color: var(--warn); }
+.pill.prio-Highest { background: var(--error-bg); color: var(--error); }
+.report-row.prio-Highest { border-left: 4px solid var(--error); }
+.report-row.prio-High { border-left: 4px solid var(--warn); }
+.reminders h2 { margin: 0; }
+.reminder { border-top: 1px solid var(--line); padding-top: 0.5rem; }
+
 /* Incident reports */
 button.tile { text-align: left; font: inherit; cursor: pointer; align-items: stretch; justify-content: flex-start; }
 button.tile:hover, a.tile:hover { background: #f6fafa; border-color: var(--brand); }

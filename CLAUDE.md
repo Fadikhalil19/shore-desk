@@ -125,4 +125,9 @@ and inventory. Fadi's decisions (2026-10-16):
   to check against MSShift: docs/phase2-lists.md.
 - AppUser.IsAdmin = copy of DESK-Admins at last sign-in (lets admins be listed as supervisors).
 - Web: src/Desk.Web/src/pages/incidents (IncidentList, IncidentEdit, IncidentView, fields, meta). Print view prints the
-  hotel address header. Next in phase 2: event log, handover, on duty (+ call-outs), safety reports.
+  hotel address header.
+- EVENT LOG built 2026-10-19: SecurityEvent + EventReminder (Desk.Core/Events, EventRules), /api/events, web pages/events.
+  Open until CompletedLocal set; creator/assignee/manager edit, anyone with Edit completes, manager voids (reason).
+  Reminders: daily ones move to next day when done. Event categories = list "event-category" (38, appended to SeedLists).
+- Shared helpers: Endpoints/Shared.cs (PacificNow, Clean, Bad); CurrentUser.LevelAtAsync(module, hotelId).
+- Next in phase 2: handover (+ "flag for handover" on incidents/events), on duty (+ call-outs), safety reports.

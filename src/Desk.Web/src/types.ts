@@ -164,3 +164,34 @@ export interface IncidentRow {
 }
 export interface IncidentPage { total: number; items: IncidentRow[] }
 export interface HistoryEntry { utc: string; userName: string; action: string; details: string | null }
+
+// --- Event log (see src/Desk.Core/Events) ---
+
+export type Priority = 'Low' | 'Medium' | 'High' | 'Highest'
+
+export interface EventSave {
+  hotelId: number; categoryId: number | null; detail: string | null; areaId: number | null; locationId: number | null
+  locationDetail: string | null; room: string | null; requestedByType: string | null; requestedByName: string | null
+  requestedByUserId: number | null; requestedByDepartmentId: number | null; requestedLocal: string | null
+  relatesToType: string | null; relatesToName: string | null; relatesToRoom: string | null; priority: Priority
+  assignedDepartmentId: number | null; assignedToId: number | null; startedLocal: string | null
+  completedLocal: string | null; narrative: string | null
+}
+
+export interface SecurityEvent extends EventSave {
+  id: number; categoryName: string; areaName: string | null; locationName: string | null; assignedToName: string | null
+  shift: Shift; createdByName: string; createdUtc: string; updatedUtc: string; voidedUtc: string | null
+  voidReason: string | null; can: { edit: boolean; complete: boolean; void: boolean }
+}
+
+export interface EventRow {
+  id: number; hotelCode: string; categoryName: string; detail: string | null; areaName: string | null
+  locationName: string | null; room: string | null; priority: Priority; startedLocal: string; completedLocal: string | null
+  shift: Shift; assignedToName: string | null; createdByName: string; narrative: string | null; voided: boolean
+}
+export interface EventPage { total: number; items: EventRow[] }
+
+export interface Reminder {
+  id: number; hotelId: number; title: string; notes: string | null; dueLocal: string; repeatsDaily: boolean
+  assignedDepartmentId: number | null; lastDoneBy: string | null; lastDoneUtc: string | null; overdue: boolean
+}
