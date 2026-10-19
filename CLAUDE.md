@@ -104,6 +104,7 @@ and inventory. Fadi's decisions (2026-10-16):
 - Cloudflare DONE 2026-10-16: Access app "Shore Desk" (Entra login only, instant auth, 24 h) with reusable policy
   "Desk users (allow list)" = emails, only fadikhalil@ so far (add officers there; seats shared with contract app);
   tunnel contracts-server route desk.shorehotelapps.com -> https://localhost:5444, TLS verify off.
+- FIRST SIGN-IN OK 2026-10-19: Fadi via desk.shorehotelapps.com -> Cloudflare -> Entra -> app shows "(admin)".
 - NOT done in phase 1: backup task, location spots,
   SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
