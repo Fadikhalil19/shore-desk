@@ -35,7 +35,15 @@ export interface Department { id: number; name: string; isActive: boolean }
 export interface LocationSpot { id: number; name: string; sortOrder: number; isActive: boolean }
 export interface Area { id: number; hotelId: number | null; name: string; sortOrder: number; isActive: boolean; locations: LocationSpot[] }
 
-export interface Lookups { hotels: Hotel[]; departments: Department[]; areas: Area[]; modules: ModuleInfo[] }
+export interface ListInfo { key: string; name: string; description: string }
+export interface ListItem { id: number; listKey: string; name: string; sortOrder: number; isActive: boolean }
+
+export interface Lookups {
+  hotels: Hotel[]; departments: Department[]; areas: Area[]; modules: ModuleInfo[]
+  lists: ListInfo[]; listItems: ListItem[]
+}
+
+export interface Person { id: number; name: string; departmentId: number | null; hotelId: number | null }
 
 export interface AdminUser {
   id: number
@@ -80,3 +88,79 @@ export interface SignInReport { people: SignInPerson[]; events: ActivityPage }
 
 export interface HealthCheck { area: string; name: string; status: 'Ok' | 'Warning' | 'Problem' | 'Info'; message: string; detail: string | null }
 export interface HealthReport { checkedUtc: string; checks: HealthCheck[] }
+
+// --- Incident reports (see src/Desk.Core/Incidents) ---
+
+export type IncidentForm = 'Incident' | 'GuestInjury' | 'EmployeeInjury' | 'PropertyMissingDamaged' | 'HighLevel'
+export type IncidentStatus = 'Draft' | 'AwaitingReview' | 'Approved' | 'Voided'
+export type Shift = 'Morning' | 'Afternoon' | 'Overnight'
+
+export interface Address { street?: string; city?: string; state?: string; zip?: string; country?: string }
+export interface PersonDescription {
+  race?: string; height?: string; weight?: string; eyes?: string; hair?: string; clothing?: string
+  licenseNumber?: string; licenseState?: string; marks?: string
+}
+export interface PersonEntry {
+  type?: string; firstName?: string; lastName?: string; userId?: number | null; departmentId?: number | null
+  position?: string; employeeNumber?: string; dateOfHire?: string; room?: string; arrivalDate?: string
+  departureDate?: string; company?: string; phone?: string; email?: string; gender?: string; dateOfBirth?: string
+  hotelProperty?: string; home?: Address; work?: Address; description?: PersonDescription
+}
+export interface VehicleEntry {
+  circumstanceId?: number | null; otherCircumstance?: string; make?: string; model?: string; year?: string
+  colorId?: number | null; plate?: string; plateState?: string; vin?: string; valetTicket?: string
+  operatorName?: string; operatorDateOfBirth?: string; operatorLicense?: string; operatorPhone?: string
+  ownerName?: string; ownerAddress?: string; ownerPhone?: string; insuranceCompany?: string
+  rentalCompany?: string; damage?: string; description?: string
+}
+export interface LockEntry { usedByType?: string; keyName?: string; usedLocal?: string; departmentId?: number | null; userId?: number | null; name?: string }
+export interface MediaEntry { pictureCount?: number | null; picturesTakenLocal?: string; takenBy?: string; videoLocal?: string; videoDescription?: string }
+export interface EvidenceEntry { statusId?: number | null; items?: string; storedLocation?: string; date?: string; disposition?: string }
+export interface ClaimEntry { reportedLocal?: string; claimNumber?: string }
+export interface PoliceEntry { calledLocal?: string; agency?: string; officerName?: string; shield?: string; caseNumber?: string }
+export interface MedicalEntry {
+  detail?: string; injuryTypeId?: number | null; otherInjury?: string; bodyPartId?: number | null
+  bodyPartLocationId?: number | null; emsCalled?: boolean; emsArrivedLocal?: string; emsName?: string; emsNumber?: string
+  hospital?: string; refusedMedicalAttention?: boolean; contributingFactorId?: number | null; otherFactor?: string
+  consumedLocal?: string; symptoms?: string; safetyShoes?: boolean | null; safetyShoesBrand?: string; safetyShoesPurchased?: string
+}
+export interface PropertyItem {
+  categoryId?: number | null; detail?: string; description?: string; colorId?: number | null
+  brand?: string; modelSerial?: string; claimValue?: number | null
+}
+export interface IncidentDetails {
+  reportedBy?: PersonEntry | null; subjects: PersonEntry[]; victims: PersonEntry[]; witnesses: PersonEntry[]
+  vehicle?: VehicleEntry | null; lockInterrogation: LockEntry[]; media?: MediaEntry | null
+  evidence?: EvidenceEntry | null; claim?: ClaimEntry | null; police?: PoliceEntry | null
+  medical?: MedicalEntry | null; propertyItems: PropertyItem[]; writtenByOther?: string; supervisorOther?: string
+}
+
+export interface IncidentSave {
+  form: IncidentForm; hotelId: number; typeId: number | null; kind: string | null; otherType: string | null
+  heading: string; occurredLocal: string | null; reportedLocal: string | null; shift: Shift | null
+  areaId: number | null; locationId: number | null; locationDetail: string | null; room: string | null
+  narrative: string | null; followUp: string | null; details: IncidentDetails
+  supervisorId: number | null; distributedTo: string | null
+}
+
+export interface Attachment {
+  id: number; fileName: string; contentType: string; sizeBytes: number; caption: string | null
+  uploadedBy: string; uploadedUtc: string; inline: boolean
+}
+
+export interface Incident extends IncidentSave {
+  id: number; number: string; formName: string; status: IncidentStatus; typeName: string | null
+  areaName: string | null; locationName: string | null; writtenById: number; writtenByName: string
+  supervisorName: string | null; createdUtc: string; updatedUtc: string; submittedUtc: string | null
+  reviewedByName: string | null; reviewedUtc: string | null; reviewNote: string | null
+  voidedUtc: string | null; voidReason: string | null; attachments: Attachment[]; missing: string[]
+  can: { edit: boolean; submit: boolean; review: boolean; reopen: boolean; void: boolean; history: boolean }
+}
+
+export interface IncidentRow {
+  id: number; number: string; form: IncidentForm; status: IncidentStatus; hotelCode: string; typeName: string | null
+  kind: string | null; heading: string; occurredLocal: string | null; shift: Shift | null; areaName: string | null
+  locationName: string | null; writtenByName: string; supervisorName: string | null; attachments: number
+}
+export interface IncidentPage { total: number; items: IncidentRow[] }
+export interface HistoryEntry { utc: string; userName: string; action: string; details: string | null }

@@ -70,8 +70,11 @@ public static class IncidentEndpoints
         g.MapPost("/{id:int}/attachments", Upload);
         g.MapGet("/{id:int}/attachments/{attachmentId:int}", Download);
         g.MapDelete("/{id:int}/attachments/{attachmentId:int}", RemoveAttachment);
-        g.MapGet("/reviewers", async (IncidentForm form, int hotelId, DeskDbContext db, CancellationToken ct) =>
-            (await Reviewers(db, form, hotelId, ct)).Select(u => new PersonOption(u.Id, u.DisplayName)).ToList());
+        // Supervisors to choose on a report: only for someone who may write that form at that hotel.
+        g.MapGet("/reviewers", async (IncidentForm form, int hotelId, CurrentUser me, DeskDbContext db, CancellationToken ct) =>
+            await LevelFor(me, form, hotelId, ct) < AccessLevel.Edit
+                ? Results.StatusCode(StatusCodes.Status403Forbidden)
+                : Results.Ok((await Reviewers(db, form, hotelId, ct)).Select(u => new PersonOption(u.Id, u.DisplayName)).ToList()));
     }
 
     // The services almost every endpoint needs, bound in one go.

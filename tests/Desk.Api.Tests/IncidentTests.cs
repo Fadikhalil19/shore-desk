@@ -122,6 +122,15 @@ public class IncidentTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, 
     }
 
     [Fact]
+    public async Task Supervisor_list_only_for_forms_you_may_write()
+    {
+        var (officer, _, _, superId) = await Team();
+        var list = await officer.GetFromJsonAsync<List<IncidentEndpoints.PersonOption>>($"/api/incidents/reviewers?form=Incident&hotelId={Sho}", J);
+        Assert.Contains(list!, p => p.Id == superId);
+        Assert.Equal(HttpStatusCode.Forbidden, (await officer.GetAsync($"/api/incidents/reviewers?form=HighLevel&hotelId={Sho}")).StatusCode);
+    }
+
+    [Fact]
     public async Task Sending_back_needs_a_note_and_returns_it_to_the_writer()
     {
         var (officer, _, super, superId) = await Team();
