@@ -2,7 +2,7 @@
 
 Claude builds the code; Fadi Khalil (fadikhalil@shorehotel.com) reviews, deploys and owns it. Fadi is not a developer.
 Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("start phase 1"). PHASE 1 CODE BUILT 2026-10-16
-(see "Phase 1 status" below); waiting on Fadi's setup steps before it can go live.
+(see "Phase 1 status" below); LIVE 2026-10-19 (Fadi only). PHASE 2 STARTED 2026-10-19.
 
 ## Source docs (Claude Docs; read with the Claude Docs connector, never web-fetch)
 - PLAN (the spec, approve before building): https://claude.ai/code/artifact/03f4bee4-f9c8-4f8f-aaa9-05fa92900d11
@@ -105,7 +105,8 @@ and inventory. Fadi's decisions (2026-10-16):
   "Desk users (allow list)" = emails, only fadikhalil@ so far (add officers there; seats shared with contract app);
   tunnel contracts-server route desk.shorehotelapps.com -> https://localhost:5444, TLS verify off.
 - FIRST SIGN-IN OK 2026-10-19: Fadi via desk.shorehotelapps.com -> Cloudflare -> Entra -> app shows "(admin)".
-- NOT done in phase 1: backup task, location spots,
+- Backup task "Shore Desk Backup" REGISTERED 2026-10-19 (runs as Fadi); test run OK to the share.
+- PHASE 1 COMPLETE 2026-10-19. Leftovers: location spots,
   SMH/OVH addresses.
 - C:\DeskData and C:\DeskApp do NOT inherit C:\ (default C:\ lets every signed-in account modify subfolders):
   only SYSTEM, Administrators, Fadi (+ svc-desk / SQL service where needed). DeskData locked 2026-10-16.
