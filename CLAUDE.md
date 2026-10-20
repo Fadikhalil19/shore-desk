@@ -153,3 +153,8 @@ and inventory. Fadi's decisions (2026-10-16):
   KeyCount + lines, KeyRules: 10 h alert, status changes). /api/keys; web pages/Keys.tsx (scan box = USB scanner types
   + Enter, board, history, shift count, key list for managers). Reusable src/SignaturePad.tsx. Keys not In -> handover.
   Key list is empty: add keys (or bring them from MSShift).
+- VISITORS built 2026-10-20: Desk.Core/Visitors (Visit with companions JSON + badge photo under files/visitors/<id>,
+  ScheduledVisit; 8 h alert). /api/visitors; web pages/Visitors.tsx (on property / today / booked / search, check-in form,
+  visit page with photo from camera, printable badge /visitors/:id/badge). Visitors still in -> handover.
+- MSSHIFT READ-OUT: tools/msshift-export/incidents.js (in-page script, counts-only progress, one JSON download per form);
+  files go to C:\DeskData\import\msshift (moved out of Downloads at once). Importer not written yet (phase 4).

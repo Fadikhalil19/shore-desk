@@ -47,6 +47,7 @@ const READY: Record<string, string> = {
   onduty: '/onduty',
   'safety-reports': '/reports',
   keys: '/keys',
+  visitors: '/visitors',
 }
 
 function Tile({ m }: { m: ModuleAccess }) {

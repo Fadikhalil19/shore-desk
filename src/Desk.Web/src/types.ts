@@ -205,7 +205,7 @@ export interface Handover {
   hotelId: number; shiftDate: string; shift: Shift; startLocal: string; endLocal: string
   previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
   notes: HandoverNote[]; incidents: HandoverIncident[] | null; events: HandoverEvent[] | null; openEvents: HandoverEvent[] | null
-  callOuts: CallOut[] | null; keysOut: HotelKey[] | null
+  callOuts: CallOut[] | null; keysOut: HotelKey[] | null; visitorsIn: Visit[] | null
   reads: { name: string; readUtc: string }[]; readByMe: boolean; canWrite: boolean
 }
 
@@ -261,4 +261,19 @@ export interface KeyHistoryRow {
 export interface KeyCount {
   id: number; hotelId: number; shiftDate: string; shift: Shift; countedBy: string; countedUtc: string; notes: string | null
   keys: number; onHand: number; lines: { keyId: number; keyName: string; expectedStatus: KeyStatus; onHand: boolean; note: string | null }[] | null
+}
+
+// --- Visitors ---
+
+export interface Companion { name: string; badgeNumber: string | null }
+export interface Visit {
+  id: number; hotelId: number; visitorName: string; company: string | null; visitorType: string; phone: string | null; email: string | null
+  areaId: number | null; areaName: string | null; areaDetail: string | null; hostName: string | null; hostUserId: number | null
+  purpose: string | null; badgeColor: string | null; badgeNumber: string | null; inLocal: string; expectedOutLocal: string | null
+  outLocal: string | null; notes: string | null; companions: Companion[]; hasPhoto: boolean; checkedInBy: string; checkedOutBy: string | null
+  overdue: boolean; hoursIn: number; voidedUtc: string | null; voidReason: string | null
+}
+export interface ScheduledVisit {
+  id: number; hotelId: number; visitorName: string; company: string | null; visitorType: string; expectedLocal: string
+  hostName: string | null; purpose: string | null; notes: string | null; bookedBy: string; visitId: number | null
 }

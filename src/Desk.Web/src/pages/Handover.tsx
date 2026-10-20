@@ -138,6 +138,16 @@ export default function Handover() {
         </section>
       )}
 
+      {h.visitorsIn && h.visitorsIn.length > 0 && (
+        <section className="card block">
+          <h2>Visitors still on property</h2>
+          {h.visitorsIn.map(v => (
+            <p key={v.id}><Link to={`/visitors/${v.id}`}><b>{v.visitorName}</b></Link> <span className="muted small">- {[v.company,
+              `in since ${formatLocal(v.inLocal)}`, v.overdue ? 'over 8 hours' : null].filter(Boolean).join(', ')}</span></p>
+          ))}
+        </section>
+      )}
+
       <section className="card block">
         <h2>Read by</h2>
         {h.reads.length === 0 ? <p className="muted small">Nobody has marked it read yet.</p>

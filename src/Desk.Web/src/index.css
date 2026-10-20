@@ -169,6 +169,16 @@ details summary { cursor: pointer; color: var(--brand); }
   touch-action: none; cursor: crosshair; }
 .count-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.35rem 1rem; }
 
+/* Visitors */
+.visit-card { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start; }
+.visit-photo { width: 140px; height: 170px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+.badge { width: 3.4in; min-height: 2.2in; border: 6px solid; border-radius: 10px; padding: 0.25in; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; background: #fff; }
+.badge img { width: 1.1in; height: 1.3in; object-fit: cover; border-radius: 6px; }
+.badge-head { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+.badge-name { font-size: 1.35rem; font-weight: 700; }
+@media print { .badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+
 /* Safety reports: stat tiles and single-series bar lists (one hue, value in text ink) */
 .stat-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
 .stat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem 0.9rem;
