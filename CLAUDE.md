@@ -142,4 +142,8 @@ and inventory. Fadi's decisions (2026-10-16):
   event statistics by type/form/shift/officer/month/location/status; CSV export for Excel, formula-guarded, no
   narratives). Every figure only counts what the person may see (IncidentEndpoints.VisibleTo shared with search).
   Web pages/SafetyReports.tsx (single-series bar lists, stat tiles, quarter presets, print).
-- PHASE 2 CODE COMPLETE 2026-10-20 (100 tests). Gate before phase 3: 2-3 officers test it alongside MSShift.
+- PHASE 2 CODE COMPLETE 2026-10-20 (100 tests). Gate before phase 3 (2-3 officers test alongside MSShift) POSTPONED
+  by Fadi 2026-10-20: "start phase 3, I won't test anything yet". Officer testing still needed before switch-over.
+
+## Phase 3 status (started 2026-10-20)
+- Order: keys, visitors, lockers, parking, lost & found (+ shipping), packages, patrol.
