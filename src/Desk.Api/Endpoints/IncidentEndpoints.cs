@@ -89,14 +89,7 @@ public static class IncidentEndpoints
     {
         var access = await c.Me.GetAccessAsync(ct);
         var uid = (await c.Me.GetUserAsync(ct))?.Id ?? -1;
-        var (incOk, incHotel) = Scope(access[Modules.Incidents]);
-        var (hiOk, hiHotel) = Scope(access[Modules.IncidentsHighLevel]);
-        var (empOk, empHotel) = Scope(access[Modules.IncidentsEmployee]);
-
-        var query = c.Db.Incidents.Where(r =>
-            (incOk && r.Form != IncidentForm.HighLevel && r.Form != IncidentForm.EmployeeInjury && (incHotel == null || r.HotelId == incHotel))
-            || (hiOk && r.Form == IncidentForm.HighLevel && (hiHotel == null || r.HotelId == hiHotel))
-            || (empOk && r.Form == IncidentForm.EmployeeInjury && (empHotel == null || r.HotelId == empHotel)));
+        var query = VisibleTo(c.Db.Incidents, access);
 
         query = status is { } s ? query.Where(r => r.Status == s) : query.Where(r => r.Status != IncidentStatus.Voided);
         if (form is { } f) query = query.Where(r => r.Form == f);
@@ -383,6 +376,19 @@ public static class IncidentEndpoints
     static string Folder(int reportId) => Path.Combine("incidents", reportId.ToString());
 
     static (bool Ok, int? Hotel) Scope(EffectiveAccess a) => (a.Level >= AccessLevel.View, a.HotelId);
+
+    // Only the reports this person may see: each form through its own module and hotel
+    // limit. Used by the search here and by the safety reports.
+    public static IQueryable<IncidentReport> VisibleTo(IQueryable<IncidentReport> q, Dictionary<string, EffectiveAccess> access)
+    {
+        var (incOk, incHotel) = Scope(access[Modules.Incidents]);
+        var (hiOk, hiHotel) = Scope(access[Modules.IncidentsHighLevel]);
+        var (empOk, empHotel) = Scope(access[Modules.IncidentsEmployee]);
+        return q.Where(r =>
+            (incOk && r.Form != IncidentForm.HighLevel && r.Form != IncidentForm.EmployeeInjury && (incHotel == null || r.HotelId == incHotel))
+            || (hiOk && r.Form == IncidentForm.HighLevel && (hiHotel == null || r.HotelId == hiHotel))
+            || (empOk && r.Form == IncidentForm.EmployeeInjury && (empHotel == null || r.HotelId == empHotel)));
+    }
 
     static Task<AccessLevel> LevelFor(CurrentUser me, IncidentForm form, int hotelId, CancellationToken ct) =>
         me.LevelAtAsync(IncidentRules.ModuleFor(form), hotelId, ct);
