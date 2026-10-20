@@ -3,6 +3,7 @@ using Desk.Core.Handover;
 using Desk.Core.Incidents;
 using Desk.Core.Keys;
 using Desk.Core.OnDuty;
+using Desk.Core.Visitors;
 using Microsoft.EntityFrameworkCore;
 
 namespace Desk.Core.Data;
@@ -30,6 +31,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<KeyCheckout> KeyCheckouts => Set<KeyCheckout>();
     public DbSet<KeyStatusChange> KeyStatusChanges => Set<KeyStatusChange>();
     public DbSet<KeyCount> KeyCounts => Set<KeyCount>();
+    public DbSet<Visit> Visits => Set<Visit>();
+    public DbSet<ScheduledVisit> ScheduledVisits => Set<ScheduledVisit>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -260,6 +263,44 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
         {
             e.Property(x => x.Note).HasMaxLength(400);
             e.HasOne<HotelKey>().WithMany().HasForeignKey(x => x.KeyId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<Visit>(e =>
+        {
+            e.Property(x => x.VisitorName).HasMaxLength(200);
+            e.Property(x => x.Company).HasMaxLength(200);
+            e.Property(x => x.VisitorType).HasMaxLength(40);
+            e.Property(x => x.Phone).HasMaxLength(40);
+            e.Property(x => x.Email).HasMaxLength(200);
+            e.Property(x => x.AreaDetail).HasMaxLength(200);
+            e.Property(x => x.HostName).HasMaxLength(200);
+            e.Property(x => x.Purpose).HasMaxLength(400);
+            e.Property(x => x.BadgeColor).HasMaxLength(40);
+            e.Property(x => x.BadgeNumber).HasMaxLength(40);
+            e.Property(x => x.Notes).HasMaxLength(2000);
+            e.Property(x => x.CompanionsJson).HasMaxLength(4000);
+            e.Property(x => x.PhotoStoredName).HasMaxLength(80);
+            e.Property(x => x.VoidReason).HasMaxLength(1000);
+            e.HasIndex(x => new { x.HotelId, x.OutLocal });
+            e.HasIndex(x => x.InLocal);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Area).WithMany().HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.HostUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CheckedOutById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<ScheduledVisit>(e =>
+        {
+            e.Property(x => x.VisitorName).HasMaxLength(200);
+            e.Property(x => x.Company).HasMaxLength(200);
+            e.Property(x => x.VisitorType).HasMaxLength(40);
+            e.Property(x => x.HostName).HasMaxLength(200);
+            e.Property(x => x.Purpose).HasMaxLength(400);
+            e.Property(x => x.Notes).HasMaxLength(1000);
+            e.HasIndex(x => new { x.HotelId, x.ExpectedLocal });
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.HostUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Visit>().WithMany().HasForeignKey(x => x.VisitId).OnDelete(DeleteBehavior.Restrict);
         });
         m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
         m.Entity<SecurityEvent>().HasIndex(x => new { x.ForHandover, x.StartedLocal });
