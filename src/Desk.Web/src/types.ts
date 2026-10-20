@@ -277,3 +277,18 @@ export interface ScheduledVisit {
   id: number; hotelId: number; visitorName: string; company: string | null; visitorType: string; expectedLocal: string
   hostName: string | null; purpose: string | null; notes: string | null; bookedBy: string; visitId: number | null
 }
+
+// --- Lockers and parking ---
+
+export interface SpaceHolder {
+  assignmentId: number; userId: number | null; name: string; departmentId: number | null; fromDate: string
+  vehicle: string | null; plate: string | null; stickerNumber: string | null; notes: string | null
+}
+export interface Space {
+  id: number; hotelId: number; section: string; number: string; lockCode: string | null; lockSerial: string | null
+  notes: string | null; isActive: boolean; holder: SpaceHolder | null
+}
+export interface SpaceHistoryRow {
+  assignmentId: number; spaceId: number; section: string; number: string; name: string; fromDate: string; toDate: string | null
+  vehicle: string | null; plate: string | null; stickerNumber: string | null; assignedBy: string; releasedBy: string | null
+}

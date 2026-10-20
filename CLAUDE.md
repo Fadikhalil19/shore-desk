@@ -156,5 +156,8 @@ and inventory. Fadi's decisions (2026-10-16):
 - VISITORS built 2026-10-20: Desk.Core/Visitors (Visit with companions JSON + badge photo under files/visitors/<id>,
   ScheduledVisit; 8 h alert). /api/visitors; web pages/Visitors.tsx (on property / today / booked / search, check-in form,
   visit page with photo from camera, printable badge /visitors/:id/badge). Visitors still in -> handover.
+- LOCKERS + PARKING built 2026-10-20: Desk.Core/Spaces (Space with Kind Locker/Parking, SpaceAssignment with vehicle
+  fields for parking). Same endpoints mapped twice: /api/lockers (module lockers) and /api/parking (module parking);
+  lock codes only shown to Edit+. Web pages/Spaces.tsx (board, history, list with bulk add 1..N).
 - MSSHIFT READ-OUT: tools/msshift-export/incidents.js (in-page script, counts-only progress, one JSON download per form);
   files go to C:\DeskData\import\msshift (moved out of Downloads at once). Importer not written yet (phase 4).

@@ -15,6 +15,7 @@ import OnDuty from './pages/OnDuty'
 import SafetyReports from './pages/SafetyReports'
 import Keys from './pages/Keys'
 import Visitors, { VisitBadge, VisitPage } from './pages/Visitors'
+import Spaces from './pages/Spaces'
 
 interface Session { me: Me; lookups: Lookups; reloadLookups: () => Promise<void> }
 const SessionContext = createContext<Session | null>(null)
@@ -65,6 +66,8 @@ export default function App() {
             <Route path="/visitors/new" element={<VisitPage />} />
             <Route path="/visitors/:id" element={<VisitPage />} />
             <Route path="/visitors/:id/badge" element={<VisitBadge />} />
+            <Route path="/lockers" element={<Spaces key="lockers" kind="lockers" />} />
+            <Route path="/parking" element={<Spaces key="parking" kind="parking" />} />
             <Route path="*" element={<p>Page not found. <Link to="/">Back to the start page</Link></p>} />
           </Routes>
         </main>
@@ -93,6 +96,8 @@ function TopBar() {
         {me.modules.some(m => m.key === 'safety-reports' && m.level !== 'None') && <NavLink to="/reports">Reports</NavLink>}
         {me.modules.some(m => m.key === 'keys' && m.level !== 'None') && <NavLink to="/keys">Keys</NavLink>}
         {me.modules.some(m => m.key === 'visitors' && m.level !== 'None') && <NavLink to="/visitors">Visitors</NavLink>}
+        {me.modules.some(m => m.key === 'lockers' && m.level !== 'None') && <NavLink to="/lockers">Lockers</NavLink>}
+        {me.modules.some(m => m.key === 'parking' && m.level !== 'None') && <NavLink to="/parking">Parking</NavLink>}
         {me.isAdmin && <NavLink to="/settings">Settings</NavLink>}
         <span className="who">{me.name}{me.isAdmin ? ' (admin)' : ''}</span>
         <a href="/auth/logout">Sign out</a>
