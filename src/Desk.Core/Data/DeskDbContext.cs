@@ -3,6 +3,7 @@ using Desk.Core.Handover;
 using Desk.Core.Incidents;
 using Desk.Core.Keys;
 using Desk.Core.OnDuty;
+using Desk.Core.Spaces;
 using Desk.Core.Visitors;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<KeyCount> KeyCounts => Set<KeyCount>();
     public DbSet<Visit> Visits => Set<Visit>();
     public DbSet<ScheduledVisit> ScheduledVisits => Set<ScheduledVisit>();
+    public DbSet<Space> Spaces => Set<Space>();
+    public DbSet<SpaceAssignment> SpaceAssignments => Set<SpaceAssignment>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -301,6 +304,33 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.HostUserId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<Visit>().WithMany().HasForeignKey(x => x.VisitId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<Space>(e =>
+        {
+            e.Property(x => x.Section).HasMaxLength(40);
+            e.Property(x => x.Number).HasMaxLength(40);
+            e.Property(x => x.LockCode).HasMaxLength(40);
+            e.Property(x => x.LockSerial).HasMaxLength(60);
+            e.Property(x => x.Notes).HasMaxLength(400);
+            e.HasIndex(x => new { x.HotelId, x.Kind, x.Section, x.Number }).IsUnique();
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<SpaceAssignment>().WithMany().HasForeignKey(x => x.CurrentAssignmentId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<SpaceAssignment>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(200);
+            foreach (var p in new[] { "VehicleMake", "VehicleModel", "VehicleColor", "PlateState" }) e.Property(p).HasMaxLength(60);
+            e.Property(x => x.VehicleYear).HasMaxLength(10);
+            e.Property(x => x.Plate).HasMaxLength(20);
+            e.Property(x => x.StickerNumber).HasMaxLength(40);
+            e.Property(x => x.Notes).HasMaxLength(1000);
+            e.HasIndex(x => x.SpaceId);
+            e.HasIndex(x => x.UserId);
+            e.HasOne(x => x.Space).WithMany().HasForeignKey(x => x.SpaceId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.DepartmentId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.AssignedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.ReleasedById).OnDelete(DeleteBehavior.Restrict);
         });
         m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
         m.Entity<SecurityEvent>().HasIndex(x => new { x.ForHandover, x.StartedLocal });
