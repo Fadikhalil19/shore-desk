@@ -1,6 +1,7 @@
 using Desk.Core.Events;
 using Desk.Core.Handover;
 using Desk.Core.Incidents;
+using Desk.Core.OnDuty;
 using Microsoft.EntityFrameworkCore;
 
 namespace Desk.Core.Data;
@@ -22,6 +23,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<EventReminder> EventReminders => Set<EventReminder>();
     public DbSet<HandoverNote> HandoverNotes => Set<HandoverNote>();
     public DbSet<HandoverRead> HandoverReads => Set<HandoverRead>();
+    public DbSet<DutyAssignment> DutyAssignments => Set<DutyAssignment>();
+    public DbSet<CallOut> CallOuts => Set<CallOut>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -180,6 +183,30 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift, x.UserId }).IsUnique();
             e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<DutyAssignment>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(200);
+            e.Property(x => x.Radio).HasMaxLength(40);
+            e.Property(x => x.Post).HasMaxLength(100);
+            e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift });
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.DepartmentId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<CallOut>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(200);
+            e.Property(x => x.Reason).HasMaxLength(40);
+            e.Property(x => x.Notes).HasMaxLength(1000);
+            e.Property(x => x.CoveredBy).HasMaxLength(200);
+            e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift });
+            e.HasIndex(x => x.UserId);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.DepartmentId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
         });
         m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
         m.Entity<SecurityEvent>().HasIndex(x => new { x.ForHandover, x.StartedLocal });
