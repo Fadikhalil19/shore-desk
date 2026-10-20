@@ -138,4 +138,8 @@ and inventory. Fadi's decisions (2026-10-16):
 - ON DUTY built 2026-10-19: Desk.Core/OnDuty (DutyAssignment, CallOut, OnDutyRules: reasons list, times must fit
   the shift). /api/onduty (roster per hotel+shift, copy another shift's roster, call-outs + 30-day search).
   Call-outs show on the handover (for people with onduty View). Web pages/OnDuty.tsx; shift helpers src/shifts.ts.
-- Next in phase 2: safety reports (shift summary, incidents by type/shift/officer/quarter, Excel export).
+- SAFETY REPORTS built 2026-10-20: /api/reports (shift summary default = the shift that just ended; incident and
+  event statistics by type/form/shift/officer/month/location/status; CSV export for Excel, formula-guarded, no
+  narratives). Every figure only counts what the person may see (IncidentEndpoints.VisibleTo shared with search).
+  Web pages/SafetyReports.tsx (single-series bar lists, stat tiles, quarter presets, print).
+- PHASE 2 CODE COMPLETE 2026-10-20 (100 tests). Gate before phase 3: 2-3 officers test it alongside MSShift.

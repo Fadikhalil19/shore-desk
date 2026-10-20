@@ -224,3 +224,21 @@ export interface Roster {
   previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
   roster: DutyAssignment[]; callOuts: CallOut[]; canWrite: boolean
 }
+
+// --- Safety reports ---
+
+export interface Count { key: string; value: number }
+export interface IncidentStats {
+  from: string; to: string; total: number; byType: Count[]; byForm: Count[]; byShift: Count[]; byOfficer: Count[]
+  byMonth: Count[]; byLocation: Count[]; byStatus: Count[]; byHotel: Count[]
+}
+export interface EventStats {
+  from: string; to: string; total: number; open: number; averageMinutesToComplete: number | null
+  byCategory: Count[]; byShift: Count[]; byOfficer: Count[]; byPriority: Count[]; byMonth: Count[]
+}
+export interface ShiftSummary {
+  hotelId: number; shiftDate: string; shift: Shift; startLocal: string; endLocal: string; previousDate: string; previousShift: Shift
+  onDuty: DutyAssignment[] | null; callOuts: CallOut[] | null
+  incidents: { id: number; number: string; form: string; heading: string; type: string | null; occurredLocal: string | null; status: IncidentStatus; writtenBy: string }[] | null
+  eventsTotal: number | null; eventsOpen: number | null; eventsByCategory: Count[] | null; handoverNotes: string[] | null
+}

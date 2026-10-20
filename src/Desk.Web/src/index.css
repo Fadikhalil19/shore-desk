@@ -164,6 +164,22 @@ details summary { cursor: pointer; color: var(--brand); }
 .reminder { border-top: 1px solid var(--line); padding-top: 0.5rem; }
 .note { border-top: 1px solid var(--line); padding: 0.5rem 0; }
 .note:first-of-type { border-top: 0; }
+/* Safety reports: stat tiles and single-series bar lists (one hue, value in text ink) */
+.stat-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
+.stat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem 0.9rem;
+  display: flex; flex-direction: column; gap: 0.1rem; }
+.stat-tile b { font-size: 1.6rem; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.chart-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.75rem; }
+.bars { display: flex; flex-direction: column; gap: 0.15rem; }
+.bar-row { display: grid; grid-template-columns: minmax(6rem, 34%) 1fr 2.5rem; gap: 0.6rem; align-items: center;
+  padding: 0.2rem 0.25rem; border-radius: 6px; }
+.bar-row:hover { background: #f0f5f5; }
+.bar-label { font-size: 0.88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { height: 10px; }
+.bar { display: block; height: 10px; min-width: 2px; background: var(--brand); border-radius: 0 4px 4px 0; }
+.bar-value { text-align: right; font-size: 0.88rem; font-variant-numeric: tabular-nums; color: var(--text); }
+@media print { .bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .chart { break-inside: avoid; } }
+
 .add-row { border-top: 1px solid var(--line); margin-top: 0.75rem; padding-top: 0.75rem; }
 
 /* Incident reports */
