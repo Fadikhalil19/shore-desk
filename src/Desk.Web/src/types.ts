@@ -205,7 +205,7 @@ export interface Handover {
   hotelId: number; shiftDate: string; shift: Shift; startLocal: string; endLocal: string
   previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
   notes: HandoverNote[]; incidents: HandoverIncident[] | null; events: HandoverEvent[] | null; openEvents: HandoverEvent[] | null
-  callOuts: CallOut[] | null
+  callOuts: CallOut[] | null; keysOut: HotelKey[] | null
   reads: { name: string; readUtc: string }[]; readByMe: boolean; canWrite: boolean
 }
 
@@ -241,4 +241,24 @@ export interface ShiftSummary {
   onDuty: DutyAssignment[] | null; callOuts: CallOut[] | null
   incidents: { id: number; number: string; form: string; heading: string; type: string | null; occurredLocal: string | null; status: IncidentStatus; writtenBy: string }[] | null
   eventsTotal: number | null; eventsOpen: number | null; eventsByCategory: Count[] | null; handoverNotes: string[] | null
+}
+
+// --- Keys ---
+
+export type KeyStatus = 'In' | 'SignedOut' | 'Missing' | 'Broken'
+export interface KeyHolder {
+  checkoutId: number; toType: string; name: string; company: string | null; departmentId: number | null
+  outLocal: string; dueBackLocal: string | null; outBy: string; overdue: boolean; hoursOut: number
+}
+export interface HotelKey {
+  id: number; hotelId: number; name: string; barcode: string | null; description: string | null; status: KeyStatus
+  isActive: boolean; sortOrder: number; holder: KeyHolder | null
+}
+export interface KeyHistoryRow {
+  kind: string; keyId: number; keyName: string; atLocal: string; who: string | null; company: string | null; by: string
+  note: string | null; checkoutId: number | null; hasSignature: boolean; backLocal: string | null; backBy: string | null; hasBackSignature: boolean
+}
+export interface KeyCount {
+  id: number; hotelId: number; shiftDate: string; shift: Shift; countedBy: string; countedUtc: string; notes: string | null
+  keys: number; onHand: number; lines: { keyId: number; keyName: string; expectedStatus: KeyStatus; onHand: boolean; note: string | null }[] | null
 }

@@ -149,3 +149,7 @@ and inventory. Fadi's decisions (2026-10-16):
 
 ## Phase 3 status (started 2026-10-20)
 - Order: keys, visitors, lockers, parking, lost & found (+ shipping), packages, patrol.
+- KEYS built 2026-10-20: Desk.Core/Keys (HotelKey, KeyCheckout with PNG finger signatures in the DB, KeyStatusChange,
+  KeyCount + lines, KeyRules: 10 h alert, status changes). /api/keys; web pages/Keys.tsx (scan box = USB scanner types
+  + Enter, board, history, shift count, key list for managers). Reusable src/SignaturePad.tsx. Keys not In -> handover.
+  Key list is empty: add keys (or bring them from MSShift).

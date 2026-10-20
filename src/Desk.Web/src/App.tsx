@@ -13,6 +13,7 @@ import EventView from './pages/events/EventView'
 import Handover from './pages/Handover'
 import OnDuty from './pages/OnDuty'
 import SafetyReports from './pages/SafetyReports'
+import Keys from './pages/Keys'
 
 interface Session { me: Me; lookups: Lookups; reloadLookups: () => Promise<void> }
 const SessionContext = createContext<Session | null>(null)
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/handover" element={<Handover />} />
             <Route path="/onduty" element={<OnDuty />} />
             <Route path="/reports" element={<SafetyReports />} />
+            <Route path="/keys" element={<Keys />} />
             <Route path="*" element={<p>Page not found. <Link to="/">Back to the start page</Link></p>} />
           </Routes>
         </main>
@@ -84,6 +86,7 @@ function TopBar() {
         {me.modules.some(m => m.key === 'handover' && m.level !== 'None') && <NavLink to="/handover">Handover</NavLink>}
         {me.modules.some(m => m.key === 'onduty' && m.level !== 'None') && <NavLink to="/onduty">On duty</NavLink>}
         {me.modules.some(m => m.key === 'safety-reports' && m.level !== 'None') && <NavLink to="/reports">Reports</NavLink>}
+        {me.modules.some(m => m.key === 'keys' && m.level !== 'None') && <NavLink to="/keys">Keys</NavLink>}
         {me.isAdmin && <NavLink to="/settings">Settings</NavLink>}
         <span className="who">{me.name}{me.isAdmin ? ' (admin)' : ''}</span>
         <a href="/auth/logout">Sign out</a>

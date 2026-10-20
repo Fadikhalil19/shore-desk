@@ -127,6 +127,17 @@ export default function Handover() {
         </section>
       )}
 
+      {h.keysOut && h.keysOut.length > 0 && (
+        <section className="card block">
+          <h2>Keys not in</h2>
+          {h.keysOut.map(k => (
+            <p key={k.id}><Link to="/keys"><b>{k.name}</b></Link> <span className="muted small">- {k.holder
+              ? `${k.holder.name} since ${formatLocal(k.holder.outLocal)}${k.holder.overdue ? ' (out too long)' : ''}`
+              : k.status}</span></p>
+          ))}
+        </section>
+      )}
+
       <section className="card block">
         <h2>Read by</h2>
         {h.reads.length === 0 ? <p className="muted small">Nobody has marked it read yet.</p>

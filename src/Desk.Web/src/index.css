@@ -164,6 +164,11 @@ details summary { cursor: pointer; color: var(--brand); }
 .reminder { border-top: 1px solid var(--line); padding-top: 0.5rem; }
 .note { border-top: 1px solid var(--line); padding: 0.5rem 0; }
 .note:first-of-type { border-top: 0; }
+/* Signatures and key count */
+.signature-pad { width: 100%; height: 150px; border: 1px dashed #9fb0b1; border-radius: 8px; background: #fff;
+  touch-action: none; cursor: crosshair; }
+.count-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.35rem 1rem; }
+
 /* Safety reports: stat tiles and single-series bar lists (one hue, value in text ink) */
 .stat-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
 .stat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem 0.9rem;
