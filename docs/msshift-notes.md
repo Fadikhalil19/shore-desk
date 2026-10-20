@@ -136,3 +136,14 @@ Design note: build ONE incident record with a form type + optional sections, not
   convention name/date); sender; notified (type, to, dept, associate); received by, location stored*; comments.
 - ADMIN extras: Schedule, Attendance, Recap, Labels (barcode/badge labels), Users Report, Users Login (login history).
 - Home page: weather, latest incidents, today's handover, training videos, contacts directory.
+
+## Data read-out survey (2026-10-20, read-only; counts only, no record content)
+- Fadi decided not to ask MSShift for an export; Claude reads the data out via Chrome (see CLAUDE.md).
+- Entry: after sign-in the site root shows the login page again; the app is at /home (menu links: /d/EventLog/...,
+  /d/eventlog/Keys/KeyMenu, /d/eventlog/VisitorsNew/VisitorMenu, /d/LostandFound/..., /d/packages/..., /d/Admin/...).
+- NO Excel/CSV export anywhere seen; reports only have charts, counts and "Print/Save".
+- Report search limits (JS alerts that freeze automation if not handled): at most 6 years back, at most 732 days per search.
+- Incident reports (Admin > Reports > Incidents = /d/EventLog/EReport_Incident/Monthly_Reports):
+  2020-10-22..2022-10-21: 358 | 2022-10-22..2024-10-21: 231 | 2024-10-21..2026-10-21: 208  => about 797 in 6 years.
+  Last 2 years by form: IR 43.8%, GAI 13.0%, EAI 24.0%, MD 16.8%, HI 2.4%.
+- Records older than 6 years: not reachable through report searches; check whether record view pages still open them.
