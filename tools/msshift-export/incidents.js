@@ -78,15 +78,22 @@
     return doc.body ? doc.body.innerHTML.replace(/\s{2,}/g, ' ') : '';
   }
 
+  // Chrome may block a second download from the same page ("download multiple files?"),
+  // so every file stays in memory (window.__msxFiles) until it is known to have arrived;
+  // __msxSaveAgain(name) downloads it again without re-reading MSShift.
+  window.__msxFiles = window.__msxFiles || {};
   function save(name, data) {
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    window.__msxFiles[name] = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
+    window.__msxSaveAgain(name);
+  }
+  window.__msxSaveAgain = name => {
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
+    a.href = window.__msxFiles[name];
     a.download = name;
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
-  }
+    a.remove();
+  };
 
   function makeFrame() {
     frame = document.createElement('iframe');
