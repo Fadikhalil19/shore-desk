@@ -164,6 +164,7 @@ details summary { cursor: pointer; color: var(--brand); }
 .reminder { border-top: 1px solid var(--line); padding-top: 0.5rem; }
 .note { border-top: 1px solid var(--line); padding: 0.5rem 0; }
 .note:first-of-type { border-top: 0; }
+.add-row { border-top: 1px solid var(--line); margin-top: 0.75rem; padding-top: 0.75rem; }
 
 /* Incident reports */
 button.tile { text-align: left; font: inherit; cursor: pointer; align-items: stretch; justify-content: flex-start; }

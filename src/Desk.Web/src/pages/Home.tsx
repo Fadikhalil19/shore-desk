@@ -44,6 +44,7 @@ const READY: Record<string, string> = {
   'incidents-employee': '/incidents?form=EmployeeInjury',
   eventlog: '/events',
   handover: '/handover',
+  onduty: '/onduty',
 }
 
 function Tile({ m }: { m: ModuleAccess }) {

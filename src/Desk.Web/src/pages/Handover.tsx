@@ -5,15 +5,7 @@ import { useSession } from '../App'
 import { formatDateTime, formatLocal } from '../format'
 import type { Handover as HandoverData, HandoverEvent, Shift } from '../types'
 import { STATUS, formInfo } from './incidents/meta'
-
-const NEXT: Record<Shift, [number, Shift]> = { Morning: [0, 'Afternoon'], Afternoon: [0, 'Overnight'], Overnight: [1, 'Morning'] }
-const HOURS: Record<Shift, string> = { Morning: '5 am - 1 pm', Afternoon: '1 pm - 9 pm', Overnight: '9 pm - 5 am' }
-
-function addDays(date: string, n: number) {
-  const d = new Date(`${date}T12:00:00`)
-  d.setDate(d.getDate() + n)
-  return d.toISOString().slice(0, 10)
-}
+import { HOURS, nextShift } from '../shifts'
 
 // Handover for one hotel and shift (default: the current shift). Notes are written
 // for the next shift; flagged incidents/events of the shift and open events are listed.
@@ -46,7 +38,7 @@ export default function Handover() {
   if (!h) return <p className="muted">Loading...</p>
   const isCurrent = h.shiftDate === h.currentDate && h.shift === h.currentShift
   const hotel = lookups.hotels.find(x => x.id === h.hotelId)
-  const [nextDays, nextShift] = NEXT[h.shift]
+  const [nextDate, next] = nextShift(h.shiftDate, h.shift)
 
   return (
     <div className="stack report">
@@ -64,7 +56,7 @@ export default function Handover() {
           </select>
         )}
         <button className="secondary" onClick={() => go(h.previousDate, h.previousShift)}>&lt; Previous shift</button>
-        {!isCurrent && <button className="secondary" onClick={() => go(addDays(h.shiftDate, nextDays), nextShift)}>Next shift &gt;</button>}
+        {!isCurrent && <button className="secondary" onClick={() => go(nextDate, next)}>Next shift &gt;</button>}
         {!isCurrent && <button className="link" onClick={() => go(h.currentDate, h.currentShift)}>Current shift</button>}
       </div>
 
@@ -122,6 +114,16 @@ export default function Handover() {
         <section className="card block">
           <h2>Events still open</h2>
           {h.openEvents.map(e => <EventLine key={e.id} e={e} />)}
+        </section>
+      )}
+
+      {h.callOuts && (
+        <section className="card block">
+          <h2>Call-outs for this shift</h2>
+          {h.callOuts.length === 0 ? <p className="muted small">None.</p> : h.callOuts.map(o => (
+            <p key={o.id}><b>{o.name}</b> <span className="muted small">- {o.reason}, called {formatLocal(o.calledLocal)}
+              {o.coveredBy ? `, covered by ${o.coveredBy}` : ', not covered'}</span></p>
+          ))}
         </section>
       )}
 

@@ -205,5 +205,22 @@ export interface Handover {
   hotelId: number; shiftDate: string; shift: Shift; startLocal: string; endLocal: string
   previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
   notes: HandoverNote[]; incidents: HandoverIncident[] | null; events: HandoverEvent[] | null; openEvents: HandoverEvent[] | null
+  callOuts: CallOut[] | null
   reads: { name: string; readUtc: string }[]; readByMe: boolean; canWrite: boolean
+}
+
+// --- On duty ---
+
+export interface DutyAssignment {
+  id: number; userId: number | null; name: string; departmentId: number | null; radio: string | null; post: string | null
+  startLocal: string; endLocal: string
+}
+export interface CallOut {
+  id: number; hotelId: number; shiftDate: string; shift: Shift; userId: number | null; name: string; departmentId: number | null
+  calledLocal: string; reason: string; notes: string | null; coveredBy: string | null; takenBy: string
+}
+export interface Roster {
+  hotelId: number; shiftDate: string; shift: Shift; startLocal: string; endLocal: string
+  previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
+  roster: DutyAssignment[]; callOuts: CallOut[]; canWrite: boolean
 }

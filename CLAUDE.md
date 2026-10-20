@@ -135,4 +135,7 @@ and inventory. Fadi's decisions (2026-10-16):
   ForHandover in that shift window (each list only if the person may see that module) + open events + read marks.
   Flag: POST /api/incidents/{id}/handover and /api/events/{id}/handover {flag} (Edit level). Web pages/Handover.tsx.
   Later modules (keys, found items, call-outs) add their own ForHandover lists here.
-- Next in phase 2: on duty (+ call-outs), safety reports.
+- ON DUTY built 2026-10-19: Desk.Core/OnDuty (DutyAssignment, CallOut, OnDutyRules: reasons list, times must fit
+  the shift). /api/onduty (roster per hotel+shift, copy another shift's roster, call-outs + 30-day search).
+  Call-outs show on the handover (for people with onduty View). Web pages/OnDuty.tsx; shift helpers src/shifts.ts.
+- Next in phase 2: safety reports (shift summary, incidents by type/shift/officer/quarter, Excel export).
