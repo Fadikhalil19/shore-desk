@@ -27,8 +27,10 @@ and inventory. Fadi's decisions (2026-10-16):
 - Lost-item shipping: guest may pay or not -> track paid / no charge / waiting; NEVER take or store card data.
 - Hardware (scanner, signature pad, badge printer, kiosk): unknown - design to need none (USB scanner = keyboard,
   finger signatures, browser printing).
-- MSShift data export: Fadi will ask support (support@msshift-ssw.com) "in time". Fallback = read records via Chrome
-  only with Fadi's explicit OK (slow, may break MSShift terms).
+- MSShift data export: Fadi decided 2026-10-20 NOT to ask MSShift; "export as much as you can by yourself" = explicit
+  OK to read records via Chrome (Fadi signed in; slow; may go against MSShift terms - he was told). Check MSShift's own
+  report/export screens first (ask before each download). Extracted data ONLY under C:\DeskData\import\msshift (locked),
+  never in Git or chat. Read-only in MSShift: never create, edit or delete anything there.
 - MSShift contract: Fadi thinks it was recently renewed; find renewal/notice date, add it to the contract app.
 
 ## Build order (from the plan)
