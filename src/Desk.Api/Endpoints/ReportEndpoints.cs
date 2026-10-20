@@ -172,7 +172,7 @@ public static class ReportEndpoints
         var (rows, f, t, error) = await EventRows(from, to, hotelId, c, ct);
         if (error is not null) return error;
         var done = rows!.Where(r => r.Completed is not null).Select(r => (r.Completed!.Value - r.Started).TotalMinutes).Where(m => m >= 0).ToList();
-        await c.Log.LogAsync("View", Modules.SafetyReports, "EventStats", null, new { from = f, to = t, hotelId, count = rows.Count }, ct);
+        await c.Log.LogAsync("View", Modules.SafetyReports, "EventStats", null, new { from = f, to = t, hotelId, count = rows!.Count }, ct);
         return Results.Ok(new EventStats(f, t, rows.Count, rows.Count(r => r.Completed is null),
             done.Count > 0 ? Math.Round(done.Average()) : null,
             Group(rows.Select(r => r.Category)),
@@ -189,7 +189,7 @@ public static class ReportEndpoints
         var csv = Csv(["Id", "Hotel", "Category", "Detail", "Priority", "Started", "Completed", "Shift", "Location", "Logged by", "Assigned to"],
             rows!.Select(r => new[] { r.Id.ToString(), r.Hotel, r.Category, r.Detail, r.Priority, r.Started.ToString("yyyy-MM-dd HH:mm"),
                 r.Completed?.ToString("yyyy-MM-dd HH:mm"), r.Shift.ToString(), r.Area, r.CreatedBy, r.AssignedTo }));
-        await c.Log.LogAsync("Download", Modules.SafetyReports, "EventExport", null, new { from = f, to = t, hotelId, count = rows.Count }, ct);
+        await c.Log.LogAsync("Download", Modules.SafetyReports, "EventExport", null, new { from = f, to = t, hotelId, count = rows!.Count }, ct);
         return Results.File(csv, "text/csv", $"events {f:yyyy-MM-dd} to {t:yyyy-MM-dd}.csv");
     }
 
