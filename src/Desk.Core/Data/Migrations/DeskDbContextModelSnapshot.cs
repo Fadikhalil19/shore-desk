@@ -3926,6 +3926,159 @@ namespace Desk.Core.Data.Migrations
                     b.ToTable("DutyAssignments");
                 });
 
+            modelBuilder.Entity("Desk.Core.Packages.Package", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly?>("ArrivalDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Carrier")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int?>("ClosedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ClosedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ClosedToName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Company")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("DepartureDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Direction")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<bool>("ForHandover")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("GroupName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("HandlingFee")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int?>("NotifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NotifiedHow")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime?>("NotifiedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("OtherParty")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("PackageType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("PersonName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PersonType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int?>("PersonUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReceivedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Room")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<byte[]>("Signature")
+                        .HasMaxLength(-1)
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("StorageLocation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Weight")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClosedById");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("NotifiedById");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("PersonUserId");
+
+                    b.HasIndex("TrackingNumber");
+
+                    b.HasIndex("HotelId", "Status");
+
+                    b.ToTable("Packages");
+                });
+
             modelBuilder.Entity("Desk.Core.Spaces.Space", b =>
                 {
                     b.Property<int>("Id")
@@ -4773,6 +4926,36 @@ namespace Desk.Core.Data.Migrations
                     b.HasOne("Desk.Core.Data.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Desk.Core.Packages.Package", b =>
+                {
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("ClosedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("NotifiedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("PersonUserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

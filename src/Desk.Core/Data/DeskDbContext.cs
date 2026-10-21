@@ -4,6 +4,7 @@ using Desk.Core.Incidents;
 using Desk.Core.Keys;
 using Desk.Core.LostFound;
 using Desk.Core.OnDuty;
+using Desk.Core.Packages;
 using Desk.Core.Spaces;
 using Desk.Core.Visitors;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +41,7 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<FoundItem> FoundItems => Set<FoundItem>();
     public DbSet<LostReport> LostReports => Set<LostReport>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
+    public DbSet<Package> Packages => Set<Package>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -403,6 +405,33 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.HasIndex(x => x.FoundItemId);
             e.HasOne(x => x.FoundItem).WithMany().HasForeignKey(x => x.FoundItemId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<Package>(e =>
+        {
+            e.Property(x => x.Number).HasMaxLength(20);
+            e.HasIndex(x => x.Number).IsUnique();
+            e.Property(x => x.Carrier).HasMaxLength(40);
+            e.Property(x => x.PackageType).HasMaxLength(40);
+            e.Property(x => x.TrackingNumber).HasMaxLength(80);
+            e.Property(x => x.Weight).HasMaxLength(40);
+            e.Property(x => x.PersonType).HasMaxLength(40);
+            e.Property(x => x.PersonName).HasMaxLength(200);
+            e.Property(x => x.Room).HasMaxLength(40);
+            e.Property(x => x.Company).HasMaxLength(200);
+            e.Property(x => x.GroupName).HasMaxLength(200);
+            e.Property(x => x.OtherParty).HasMaxLength(400);
+            e.Property(x => x.StorageLocation).HasMaxLength(100);
+            e.Property(x => x.NotifiedHow).HasMaxLength(40);
+            e.Property(x => x.ClosedToName).HasMaxLength(200);
+            e.Property(x => x.Signature).HasMaxLength(-1);
+            e.Property(x => x.Notes).HasMaxLength(2000);
+            e.HasIndex(x => new { x.HotelId, x.Status });
+            e.HasIndex(x => x.TrackingNumber);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.PersonUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.NotifiedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.ClosedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
         });
         m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
