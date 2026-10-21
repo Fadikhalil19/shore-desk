@@ -340,3 +340,16 @@ export interface Package {
   notifiedBy: string | null; status: PackageStatus; closedLocal: string | null; closedToName: string | null; hasSignature: boolean
   closedBy: string | null; notes: string | null; forHandover: boolean; createdBy: string; daysWaiting: number; old: boolean
 }
+
+// --- Patrol ---
+
+export interface Checkpoint { id: number; hotelId: number; name: string; code: string | null; areaId: number | null; areaName: string | null; instructions: string | null; isActive: boolean }
+export interface RouteStop { checkpointId: number; name: string; order: number; instructions: string | null }
+export interface PatrolRoute { id: number; hotelId: number; name: string; expectedMinutes: number; isActive: boolean; stops: RouteStop[] }
+export interface CheckpointScan { id: number; checkpointId: number; checkpointName: string; scannedLocal: string; officer: string; manual: boolean; problem: boolean; note: string | null; roundId: number | null }
+export interface PatrolRound {
+  id: number; hotelId: number; routeId: number; routeName: string; officer: string; startedLocal: string; endedLocal: string | null
+  status: 'InProgress' | 'Completed' | 'Abandoned'; stops: number; scanned: number; missed: number; notes: string | null
+  scans: CheckpointScan[] | null; missedStops: RouteStop[] | null; route: RouteStop[] | null
+}
+export interface ScanResult { checkpoint: string; instructions: string | null; scannedLocal: string; round: PatrolRound | null; next: string | null }

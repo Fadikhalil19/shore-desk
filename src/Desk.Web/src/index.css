@@ -179,6 +179,14 @@ details summary { cursor: pointer; color: var(--brand); }
 .badge-name { font-size: 1.35rem; font-weight: 700; }
 @media print { .badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
 
+/* Patrol */
+.patrol-stops { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; }
+.patrol-stops li span:first-child { display: inline-block; min-width: 3.2rem; font-size: 0.75rem; font-weight: 700; color: var(--warn); }
+.patrol-stops li.done span:first-child { color: var(--ok); }
+.tag-scan { max-width: 520px; margin: 0 auto; }
+.tag-ok { border-left: 6px solid var(--ok); }
+.tag-ok h1 { font-size: 1.6rem; margin: 0.2rem 0; }
+
 /* Safety reports: stat tiles and single-series bar lists (one hue, value in text ink) */
 .stat-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
 .stat-tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 0.7rem 0.9rem;

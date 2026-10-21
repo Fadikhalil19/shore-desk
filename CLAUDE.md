@@ -166,5 +166,10 @@ and inventory. Fadi's decisions (2026-10-16):
 - PACKAGES built 2026-10-21: Desk.Core/Packages (Package P2026-0001, incoming/outgoing). /api/packages (scanner
   lookup by tracking #, notify, close: PickedUp needs a signature / Delivered / ReturnedToSender / Shipped for outgoing).
   Web pages/Packages.tsx. Flagged waiting packages -> handover. Automatic email to the recipient: later (needs the desk@ mailer).
+- PATROL built 2026-10-21: Desk.Core/Patrol (Checkpoint with random 8-char Code, PatrolRoute + RouteStop, PatrolRound,
+  CheckpointScan). Tag link = https://desk.shorehotelapps.com/p/<code> -> web TagScan page posts /api/patrol/scan
+  (records the visit, attaches to the officer's open round). Codes shown to managers only; "new code" retires a tag.
+  Manual check (tag missing) recorded as Manual + problem note. Missed = route stops not scanned when the round ends.
+- PHASE 3 CODE COMPLETE 2026-10-21 (keys, visitors, lockers, parking, lost & found, packages, patrol).
 - MSSHIFT READ-OUT: tools/msshift-export/incidents.js (in-page script, counts-only progress, one JSON download per form);
   files go to C:\DeskData\import\msshift (moved out of Downloads at once). Importer not written yet (phase 4).
