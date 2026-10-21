@@ -163,5 +163,8 @@ and inventory. Fadi's decisions (2026-10-16):
   LostFoundRules: 90-day purge, match score, card-number guard). /api/lostfound; web pages/LostFound.tsx. Return in
   person with finger signature; shipping only tracks payment Waiting/Paid/NoCharge (never card data) and cannot ship
   while Waiting; managers dispose after purge date. Flagged found items / lost reports -> handover.
+- PACKAGES built 2026-10-21: Desk.Core/Packages (Package P2026-0001, incoming/outgoing). /api/packages (scanner
+  lookup by tracking #, notify, close: PickedUp needs a signature / Delivered / ReturnedToSender / Shipped for outgoing).
+  Web pages/Packages.tsx. Flagged waiting packages -> handover. Automatic email to the recipient: later (needs the desk@ mailer).
 - MSSHIFT READ-OUT: tools/msshift-export/incidents.js (in-page script, counts-only progress, one JSON download per form);
   files go to C:\DeskData\import\msshift (moved out of Downloads at once). Importer not written yet (phase 4).

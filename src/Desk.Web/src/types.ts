@@ -206,7 +206,7 @@ export interface Handover {
   previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
   notes: HandoverNote[]; incidents: HandoverIncident[] | null; events: HandoverEvent[] | null; openEvents: HandoverEvent[] | null
   callOuts: CallOut[] | null; keysOut: HotelKey[] | null; visitorsIn: Visit[] | null
-  foundItems: FoundRow[] | null; lostReports: LostRow[] | null
+  foundItems: FoundRow[] | null; lostReports: LostRow[] | null; packages: Package[] | null
   reads: { name: string; readUtc: string }[]; readByMe: boolean; canWrite: boolean
 }
 
@@ -326,4 +326,17 @@ export interface LostReport {
   report: LostRow; phone: string | null; email: string | null; arrivalDate: string | null; departureDate: string | null
   categoryId: number | null; colorId: number | null; lostWhere: string | null; lostFrom: string | null; lostTo: string | null
   notes: string | null; createdBy: string; matches: LfMatch[]
+}
+
+// --- Packages ---
+
+export type PackageDirection = 'Incoming' | 'Outgoing'
+export type PackageStatus = 'Waiting' | 'PickedUp' | 'Delivered' | 'ReturnedToSender' | 'Shipped'
+export interface Package {
+  id: number; number: string; hotelId: number; direction: PackageDirection; receivedLocal: string; carrier: string; packageType: string
+  trackingNumber: string | null; count: number; weight: string | null; handlingFee: number | null; personType: string; personName: string
+  personUserId: number | null; room: string | null; company: string | null; arrivalDate: string | null; departureDate: string | null
+  groupName: string | null; otherParty: string | null; storageLocation: string | null; notifiedLocal: string | null; notifiedHow: string | null
+  notifiedBy: string | null; status: PackageStatus; closedLocal: string | null; closedToName: string | null; hasSignature: boolean
+  closedBy: string | null; notes: string | null; forHandover: boolean; createdBy: string; daysWaiting: number; old: boolean
 }

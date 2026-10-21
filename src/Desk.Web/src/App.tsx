@@ -17,6 +17,7 @@ import Keys from './pages/Keys'
 import Visitors, { VisitBadge, VisitPage } from './pages/Visitors'
 import Spaces from './pages/Spaces'
 import LostFound, { FoundPage, LostPage } from './pages/LostFound'
+import Packages from './pages/Packages'
 
 interface Session { me: Me; lookups: Lookups; reloadLookups: () => Promise<void> }
 const SessionContext = createContext<Session | null>(null)
@@ -72,6 +73,7 @@ export default function App() {
             <Route path="/lostfound" element={<LostFound />} />
             <Route path="/lostfound/found/:id" element={<FoundPage />} />
             <Route path="/lostfound/lost/:id" element={<LostPage />} />
+            <Route path="/packages" element={<Packages />} />
             <Route path="*" element={<p>Page not found. <Link to="/">Back to the start page</Link></p>} />
           </Routes>
         </main>
@@ -103,6 +105,7 @@ function TopBar() {
         {me.modules.some(m => m.key === 'lockers' && m.level !== 'None') && <NavLink to="/lockers">Lockers</NavLink>}
         {me.modules.some(m => m.key === 'parking' && m.level !== 'None') && <NavLink to="/parking">Parking</NavLink>}
         {me.modules.some(m => m.key === 'lostfound' && m.level !== 'None') && <NavLink to="/lostfound">Lost &amp; found</NavLink>}
+        {me.modules.some(m => m.key === 'packages' && m.level !== 'None') && <NavLink to="/packages">Packages</NavLink>}
         {me.isAdmin && <NavLink to="/settings">Settings</NavLink>}
         <span className="who">{me.name}{me.isAdmin ? ' (admin)' : ''}</span>
         <a href="/auth/logout">Sign out</a>

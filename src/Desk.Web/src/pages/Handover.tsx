@@ -158,6 +158,14 @@ export default function Handover() {
         </section>
       )}
 
+      {h.packages && h.packages.length > 0 && (
+        <section className="card block">
+          <h2>Packages flagged for handover</h2>
+          {h.packages.map(p => <p key={p.id}><Link to="/packages"><b>{p.number}</b></Link> <span className="small">{p.direction === 'Outgoing' ? 'from' : 'for'} {p.personName}{p.room ? `, room ${p.room}` : ''}</span>
+            <span className="muted small"> - {p.carrier}, {formatLocal(p.receivedLocal)}{p.storageLocation ? `, on ${p.storageLocation}` : ''}</span></p>)}
+        </section>
+      )}
+
       <section className="card block">
         <h2>Read by</h2>
         {h.reads.length === 0 ? <p className="muted small">Nobody has marked it read yet.</p>
