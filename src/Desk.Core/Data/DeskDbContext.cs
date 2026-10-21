@@ -2,6 +2,7 @@ using Desk.Core.Events;
 using Desk.Core.Handover;
 using Desk.Core.Incidents;
 using Desk.Core.Keys;
+using Desk.Core.LostFound;
 using Desk.Core.OnDuty;
 using Desk.Core.Spaces;
 using Desk.Core.Visitors;
@@ -36,6 +37,9 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<ScheduledVisit> ScheduledVisits => Set<ScheduledVisit>();
     public DbSet<Space> Spaces => Set<Space>();
     public DbSet<SpaceAssignment> SpaceAssignments => Set<SpaceAssignment>();
+    public DbSet<FoundItem> FoundItems => Set<FoundItem>();
+    public DbSet<LostReport> LostReports => Set<LostReport>();
+    public DbSet<Shipment> Shipments => Set<Shipment>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -331,6 +335,75 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.HasOne<Department>().WithMany().HasForeignKey(x => x.DepartmentId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.AssignedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.ReleasedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<FoundItem>(e =>
+        {
+            e.Property(x => x.Number).HasMaxLength(20);
+            e.HasIndex(x => x.Number).IsUnique();
+            e.Property(x => x.Detail).HasMaxLength(200);
+            e.Property(x => x.Description).HasMaxLength(2000);
+            e.Property(x => x.Brand).HasMaxLength(100);
+            e.Property(x => x.ModelSerial).HasMaxLength(100);
+            e.Property(x => x.LocationDetail).HasMaxLength(200);
+            e.Property(x => x.Room).HasMaxLength(40);
+            e.Property(x => x.FoundByType).HasMaxLength(40);
+            e.Property(x => x.FoundByName).HasMaxLength(200);
+            e.Property(x => x.StorageLocation).HasMaxLength(100);
+            e.Property(x => x.OwnerName).HasMaxLength(200);
+            e.Property(x => x.OwnerContact).HasMaxLength(200);
+            e.Property(x => x.Notes).HasMaxLength(2000);
+            e.Property(x => x.PhotoStoredName).HasMaxLength(80);
+            e.Property(x => x.ReturnedToName).HasMaxLength(200);
+            e.Property(x => x.ReturnSignature).HasMaxLength(-1);
+            e.Property(x => x.DisposalMethod).HasMaxLength(40);
+            e.Property(x => x.CloseNote).HasMaxLength(1000);
+            e.HasIndex(x => new { x.HotelId, x.Status, x.PurgeDate });
+            e.HasIndex(x => x.FoundLocal);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ListItem>().WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ListItem>().WithMany().HasForeignKey(x => x.ColorId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Area).WithMany().HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.FoundByUserId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Department>().WithMany().HasForeignKey(x => x.FoundByDepartmentId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.ClosedById).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<LostReport>(e =>
+        {
+            e.Property(x => x.Number).HasMaxLength(20);
+            e.HasIndex(x => x.Number).IsUnique();
+            e.Property(x => x.OwnerName).HasMaxLength(200);
+            e.Property(x => x.Phone).HasMaxLength(40);
+            e.Property(x => x.Email).HasMaxLength(200);
+            e.Property(x => x.Room).HasMaxLength(40);
+            e.Property(x => x.Description).HasMaxLength(2000);
+            e.Property(x => x.Brand).HasMaxLength(100);
+            e.Property(x => x.LostWhere).HasMaxLength(200);
+            e.Property(x => x.Notes).HasMaxLength(2000);
+            e.HasIndex(x => new { x.HotelId, x.Status });
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ListItem>().WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<ListItem>().WithMany().HasForeignKey(x => x.ColorId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<FoundItem>().WithMany().HasForeignKey(x => x.FoundItemId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<Shipment>(e =>
+        {
+            e.Property(x => x.RecipientName).HasMaxLength(200);
+            e.Property(x => x.Street).HasMaxLength(200);
+            e.Property(x => x.City).HasMaxLength(100);
+            e.Property(x => x.State).HasMaxLength(60);
+            e.Property(x => x.Zip).HasMaxLength(20);
+            e.Property(x => x.Country).HasMaxLength(60);
+            e.Property(x => x.Phone).HasMaxLength(40);
+            e.Property(x => x.Email).HasMaxLength(200);
+            e.Property(x => x.Carrier).HasMaxLength(40);
+            e.Property(x => x.TrackingNumber).HasMaxLength(60);
+            e.Property(x => x.PaymentNote).HasMaxLength(400);
+            e.HasIndex(x => x.FoundItemId);
+            e.HasOne(x => x.FoundItem).WithMany().HasForeignKey(x => x.FoundItemId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
         });
         m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
         m.Entity<SecurityEvent>().HasIndex(x => new { x.ForHandover, x.StartedLocal });

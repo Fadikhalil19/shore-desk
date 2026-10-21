@@ -27,7 +27,8 @@ public static class HandoverEndpoints
     public record HandoverDto(int HotelId, DateOnly ShiftDate, Shift Shift, DateTime StartLocal, DateTime EndLocal,
         DateOnly PreviousDate, Shift PreviousShift, DateOnly CurrentDate, Shift CurrentShift,
         List<NoteDto> Notes, List<IncidentItem>? Incidents, List<EventItem>? Events, List<EventItem>? OpenEvents,
-        List<OnDutyEndpoints.CallOutDto>? CallOuts, List<KeyEndpoints.KeyDto>? KeysOut, List<VisitorEndpoints.VisitDto>? VisitorsIn, List<ReadDto> Reads, bool ReadByMe, bool CanWrite);
+        List<OnDutyEndpoints.CallOutDto>? CallOuts, List<KeyEndpoints.KeyDto>? KeysOut, List<VisitorEndpoints.VisitDto>? VisitorsIn,
+        List<LostFoundEndpoints.FoundRow>? FoundItems, List<LostFoundEndpoints.LostRow>? LostReports, List<ReadDto> Reads, bool ReadByMe, bool CanWrite);
 
     public static void MapHandoverEndpoints(this WebApplication app)
     {
@@ -95,6 +96,17 @@ public static class HandoverEndpoints
         var visitorsIn = await c.Me.LevelAtAsync(Modules.Visitors, hotelId, ct) >= AccessLevel.View
             ? await VisitorEndpoints.StillIn(c.Db, hotelId, ct) : null;
 
+        // Found items and lost reports flagged for handover (still open), whatever their date.
+        List<LostFoundEndpoints.FoundRow>? found = null;
+        List<LostFoundEndpoints.LostRow>? lost = null;
+        if (await c.Me.LevelAtAsync(Modules.LostFound, hotelId, ct) >= AccessLevel.View)
+        {
+            found = await LostFoundEndpoints.Rows(c.Db, c.Db.FoundItems.Where(f => f.HotelId == hotelId && f.ForHandover
+                && f.Status == Desk.Core.LostFound.FoundStatus.InStorage).OrderBy(f => f.FoundLocal), ct);
+            lost = await LostFoundEndpoints.LostRows(c.Db, c.Db.LostReports.Where(l => l.HotelId == hotelId && l.ForHandover
+                && l.Status != Desk.Core.LostFound.LostStatus.Closed).OrderBy(l => l.ReportedLocal), ct);
+        }
+
         var reads = await c.Db.HandoverReads.Where(r => r.HotelId == hotelId && r.ShiftDate == d && r.Shift == s)
             .OrderBy(r => r.ReadUtc)
             .Select(r => new { r.UserId, r.ReadUtc, Name = c.Db.Users.Where(u => u.Id == r.UserId).Select(u => u.DisplayName).First() })
@@ -102,7 +114,7 @@ public static class HandoverEndpoints
 
         await c.Log.LogAsync("View", Modules.Handover, "Handover", $"{hotelId}/{d:yyyy-MM-dd}/{s}", null, ct);
         return Results.Ok(new HandoverDto(hotelId, d, s, start, end, prevDate, prevShift, curDate, curShift, notes, incidents,
-            events, open, callOuts, keysOut, visitorsIn, reads.Select(r => new ReadDto(r.Name, r.ReadUtc)).ToList(), reads.Any(r => r.UserId == uid),
+            events, open, callOuts, keysOut, visitorsIn, found, lost, reads.Select(r => new ReadDto(r.Name, r.ReadUtc)).ToList(), reads.Any(r => r.UserId == uid),
             level >= AccessLevel.Edit));
     }
 

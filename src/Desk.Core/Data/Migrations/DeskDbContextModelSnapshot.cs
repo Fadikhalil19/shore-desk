@@ -3429,6 +3429,365 @@ namespace Desk.Core.Data.Migrations
                     b.ToTable("KeyStatusChanges");
                 });
 
+            modelBuilder.Entity("Desk.Core.LostFound.FoundItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Brand")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CloseNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("ClosedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ClosedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ColorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Detail")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("DisposalMethod")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<bool>("ForHandover")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("FoundByDepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FoundByName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("FoundByType")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<int?>("FoundByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FoundLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("HighValue")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LocationDetail")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ModelSerial")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("OwnerContact")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("OwnerName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PhotoStoredName")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<DateOnly>("PurgeDate")
+                        .HasColumnType("date");
+
+                    b.Property<byte[]>("ReturnSignature")
+                        .HasMaxLength(-1)
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ReturnedToName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Room")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("StorageLocation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AreaId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ClosedById");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FoundByDepartmentId");
+
+                    b.HasIndex("FoundByUserId");
+
+                    b.HasIndex("FoundLocal");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("HotelId", "Status", "PurgeDate");
+
+                    b.ToTable("FoundItems");
+                });
+
+            modelBuilder.Entity("Desk.Core.LostFound.LostReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly?>("ArrivalDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Brand")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ColorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("DepartureDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("ForHandover")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("FoundItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("LostFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("LostTo")
+                        .HasColumnType("date");
+
+                    b.Property<string>("LostWhere")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("OwnerName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("ReportedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Room")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FoundItemId");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
+
+                    b.HasIndex("HotelId", "Status");
+
+                    b.ToTable("LostReports");
+                });
+
+            modelBuilder.Entity("Desk.Core.LostFound.Shipment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CancelledUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Carrier")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal?>("Cost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("FoundItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HotelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Payment")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("PaymentNote")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ShippedLocal")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Zip")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("FoundItemId");
+
+                    b.HasIndex("HotelId");
+
+                    b.ToTable("Shipments");
+                });
+
             modelBuilder.Entity("Desk.Core.OnDuty.CallOut", b =>
                 {
                     b.Property<int>("Id")
@@ -4265,6 +4624,106 @@ namespace Desk.Core.Data.Migrations
                         .HasForeignKey("KeyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Desk.Core.LostFound.FoundItem", b =>
+                {
+                    b.HasOne("Desk.Core.Data.LocationArea", "Area")
+                        .WithMany()
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.ListItem", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("ClosedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.ListItem", null)
+                        .WithMany()
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Department", null)
+                        .WithMany()
+                        .HasForeignKey("FoundByDepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("FoundByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Area");
+                });
+
+            modelBuilder.Entity("Desk.Core.LostFound.LostReport", b =>
+                {
+                    b.HasOne("Desk.Core.Data.ListItem", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.ListItem", null)
+                        .WithMany()
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.LostFound.FoundItem", null)
+                        .WithMany()
+                        .HasForeignKey("FoundItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Desk.Core.LostFound.Shipment", b =>
+                {
+                    b.HasOne("Desk.Core.Data.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.LostFound.FoundItem", "FoundItem")
+                        .WithMany()
+                        .HasForeignKey("FoundItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Desk.Core.Data.Hotel", null)
+                        .WithMany()
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FoundItem");
                 });
 
             modelBuilder.Entity("Desk.Core.OnDuty.CallOut", b =>
