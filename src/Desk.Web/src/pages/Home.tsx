@@ -50,6 +50,7 @@ const READY: Record<string, string> = {
   visitors: '/visitors',
   lockers: '/lockers',
   parking: '/parking',
+  lostfound: '/lostfound',
 }
 
 function Tile({ m }: { m: ModuleAccess }) {

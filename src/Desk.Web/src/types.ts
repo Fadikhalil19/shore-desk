@@ -206,6 +206,7 @@ export interface Handover {
   previousDate: string; previousShift: Shift; currentDate: string; currentShift: Shift
   notes: HandoverNote[]; incidents: HandoverIncident[] | null; events: HandoverEvent[] | null; openEvents: HandoverEvent[] | null
   callOuts: CallOut[] | null; keysOut: HotelKey[] | null; visitorsIn: Visit[] | null
+  foundItems: FoundRow[] | null; lostReports: LostRow[] | null
   reads: { name: string; readUtc: string }[]; readByMe: boolean; canWrite: boolean
 }
 
@@ -291,4 +292,38 @@ export interface Space {
 export interface SpaceHistoryRow {
   assignmentId: number; spaceId: number; section: string; number: string; name: string; fromDate: string; toDate: string | null
   vehicle: string | null; plate: string | null; stickerNumber: string | null; assignedBy: string; releasedBy: string | null
+}
+
+// --- Lost and found ---
+
+export type FoundStatus = 'InStorage' | 'ReturnedToOwner' | 'Shipped' | 'Disposed'
+export type LostStatus = 'Open' | 'Matched' | 'Closed'
+export type PaymentStatus = 'Waiting' | 'Paid' | 'NoCharge'
+export interface FoundRow {
+  id: number; number: string; hotelId: number; category: string | null; detail: string | null; color: string | null; brand: string | null
+  foundLocal: string; area: string | null; room: string | null; storageLocation: string | null; purgeDate: string; status: FoundStatus
+  highValue: boolean; hasPhoto: boolean; forHandover: boolean; shipmentPayment: PaymentStatus | null
+}
+export interface Shipment {
+  id: number; foundItemId: number; itemNumber: string; itemName: string | null; recipientName: string; street: string | null; city: string | null
+  state: string | null; zip: string | null; country: string | null; phone: string | null; email: string | null; carrier: string | null
+  trackingNumber: string | null; cost: number | null; payment: PaymentStatus; paymentNote: string | null; shippedLocal: string | null
+  cancelledUtc: string | null; createdBy: string; createdUtc: string
+}
+export interface LfMatch { id: number; number: string; score: number; summary: string; when: string }
+export interface FoundItem {
+  item: FoundRow; description: string | null; modelSerial: string | null; categoryId: number | null; colorId: number | null; areaId: number | null
+  locationDetail: string | null; foundByType: string | null; foundByName: string | null; foundByUserId: number | null
+  foundByDepartmentId: number | null; ownerName: string | null; ownerContact: string | null; notes: string | null; closedLocal: string | null
+  closedBy: string | null; returnedToName: string | null; hasReturnSignature: boolean; disposalMethod: string | null; closeNote: string | null
+  createdBy: string; shipments: Shipment[]; matches: LfMatch[]; canEdit: boolean; canDispose: boolean
+}
+export interface LostRow {
+  id: number; number: string; hotelId: number; reportedLocal: string; ownerName: string; room: string | null; category: string | null
+  color: string | null; brand: string | null; description: string | null; status: LostStatus; foundItemId: number | null; forHandover: boolean
+}
+export interface LostReport {
+  report: LostRow; phone: string | null; email: string | null; arrivalDate: string | null; departureDate: string | null
+  categoryId: number | null; colorId: number | null; lostWhere: string | null; lostFrom: string | null; lostTo: string | null
+  notes: string | null; createdBy: string; matches: LfMatch[]
 }

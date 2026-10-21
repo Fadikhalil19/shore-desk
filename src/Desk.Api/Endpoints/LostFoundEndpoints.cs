@@ -180,6 +180,8 @@ public static class LostFoundEndpoints
         var file = (await http.ReadFormAsync(ct)).Files.FirstOrDefault();
         if (file is null || file.Length == 0) return Bad("No photo was sent.");
         if (FileStore.ContentTypeFor(file.FileName) is not { } type || !type.StartsWith("image/")) return Bad("The photo must be a picture (JPG, PNG, HEIC).");
+        if (file.Length > 15 * 1024 * 1024) return Bad("The photo is too large (15 MB at most).");
+        // A replaced photo stays on disk (nothing is deleted); only the newest is shown.
         f.PhotoStoredName = await files.SaveAsync(Path.Combine("lostfound", f.Id.ToString()), file, ct);
         f.UpdatedUtc = DateTime.UtcNow;
         await c.Db.SaveChangesAsync(ct);

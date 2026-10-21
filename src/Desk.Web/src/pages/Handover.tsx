@@ -148,6 +148,16 @@ export default function Handover() {
         </section>
       )}
 
+      {((h.foundItems?.length ?? 0) > 0 || (h.lostReports?.length ?? 0) > 0) && (
+        <section className="card block">
+          <h2>Lost &amp; found</h2>
+          {h.foundItems?.map(f => <p key={`f${f.id}`}><Link to={`/lostfound/found/${f.id}`}><b>{f.number}</b> {[f.brand, f.detail || f.category].filter(Boolean).join(' ')}</Link>
+            <span className="muted small"> - found {formatLocal(f.foundLocal)}{f.storageLocation ? `, in ${f.storageLocation}` : ''}</span></p>)}
+          {h.lostReports?.map(l => <p key={`l${l.id}`}><Link to={`/lostfound/lost/${l.id}`}><b>{l.number}</b> lost by {l.ownerName}</Link>
+            <span className="muted small"> - {l.description}</span></p>)}
+        </section>
+      )}
+
       <section className="card block">
         <h2>Read by</h2>
         {h.reads.length === 0 ? <p className="muted small">Nobody has marked it read yet.</p>

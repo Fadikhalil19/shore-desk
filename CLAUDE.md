@@ -159,5 +159,9 @@ and inventory. Fadi's decisions (2026-10-16):
 - LOCKERS + PARKING built 2026-10-20: Desk.Core/Spaces (Space with Kind Locker/Parking, SpaceAssignment with vehicle
   fields for parking). Same endpoints mapped twice: /api/lockers (module lockers) and /api/parking (module parking);
   lock codes only shown to Edit+. Web pages/Spaces.tsx (board, history, list with bulk add 1..N).
+- LOST & FOUND built 2026-10-21: Desk.Core/LostFound (FoundItem F2026-0001, LostReport L2026-0001, Shipment;
+  LostFoundRules: 90-day purge, match score, card-number guard). /api/lostfound; web pages/LostFound.tsx. Return in
+  person with finger signature; shipping only tracks payment Waiting/Paid/NoCharge (never card data) and cannot ship
+  while Waiting; managers dispose after purge date. Flagged found items / lost reports -> handover.
 - MSSHIFT READ-OUT: tools/msshift-export/incidents.js (in-page script, counts-only progress, one JSON download per form);
   files go to C:\DeskData\import\msshift (moved out of Downloads at once). Importer not written yet (phase 4).
