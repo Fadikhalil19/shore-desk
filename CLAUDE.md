@@ -2,7 +2,24 @@
 
 Claude builds the code; Fadi Khalil (fadikhalil@shorehotel.com) reviews, deploys and owns it. Fadi is not a developer.
 Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("start phase 1"). PHASE 1 CODE BUILT 2026-10-16
-(see "Phase 1 status" below); LIVE 2026-10-19 (Fadi only). PHASE 2 STARTED 2026-10-19.
+(see "Phase 1 status" below); LIVE 2026-10-19 (Fadi only). PHASES 2 + 3 CODE COMPLETE 2026-10-21 (128 tests). PHASE 4
+(switch-over) IN PROGRESS: MSShift read-out running, importer next.
+
+## RESUME HERE (state at end of session 2026-10-21)
+- Live at desk.shorehotelapps.com, Fadi is the only user (admin). No officers added yet (testing postponed by Fadi).
+- MSShift READ-OUT (see "Phase 4" below): incidents DONE (807). EVENT LOG RUNNING in the server's Chrome, MSShift tab
+  (it keeps running after this Claude session ends): one download per month msshift-events-YYYY-MM.json, newest first,
+  back to 2020-10; done months are remembered in that tab's localStorage key __msxEventsDone. Progress: in the MSShift
+  tab run JSON.stringify(window.__msxe) (counts only). If the tab was reloaded/signed out: Fadi signs in, then re-inject
+  tools/msshift-export/events.js and call __msxeRun('2020-10') - finished months are skipped.
+- FIRST THING NEXT SESSION: the background mover died with the old session. Move any
+  %USERPROFILE%\Downloads\msshift-events-*.json into C:\DeskData\import\msshift\events (never leave them in Downloads),
+  check every month 2020-10..2026-10 is there, and re-run missing months (remove them from __msxEventsDone first).
+- Then: read out the rest (keys, visitors, lockers, parking, lost & found, packages, handover notes, on duty, incident
+  photos/PDF attachments), write the importer (tools/, test on a copy DB), and ASK FADI before loading into the live DB.
+- Codex plugin: Fadi asked 2026-10-21 about openai/codex-plugin-cc for code reviews; Claude read it (see memory
+  codex-plugin-review). Not installed yet; Fadi installs it himself (slash commands + !codex login) if he wants it.
+- Remind Fadi when the read-out is done: set Chrome "Automatic downloads" for msshift-security-2.com back to Ask.
 
 ## Source docs (Claude Docs; read with the Claude Docs connector, never web-fetch)
 - PLAN (the spec, approve before building): https://claude.ai/code/artifact/03f4bee4-f9c8-4f8f-aaa9-05fa92900d11
@@ -173,3 +190,15 @@ and inventory. Fadi's decisions (2026-10-16):
 - PHASE 3 CODE COMPLETE 2026-10-21 (keys, visitors, lockers, parking, lost & found, packages, patrol).
 - MSSHIFT READ-OUT: tools/msshift-export/incidents.js (in-page script, counts-only progress, one JSON download per form);
   files go to C:\DeskData\import\msshift (moved out of Downloads at once). Importer not written yet (phase 4).
+
+## Phase 4 status (switch-over; started 2026-10-20)
+- Fadi will NOT ask MSShift for an export; Claude reads MSShift via Chrome (read-only, his signed-in session).
+  Method + MSShift page addresses and limits: docs/msshift-notes.md ("Data read-out survey"). Tools in tools/msshift-export:
+  incidents.js (done), events.js (running), analyze.py (labels + counts only).
+- RULE: record contents never come back into the chat - scripts return counts/labels only; data only in
+  C:\DeskData\import\msshift (locked: SYSTEM, Administrators, Fadi). Nothing from it in Git.
+- Report pages are label-cell / value-cell pairs (analyze.py lists the labels per form). Importer plan: console tool in
+  tools/ referencing Desk.Core; add LegacyRef columns (MSShift report/EV numbers) so imported rows are tagged and can be
+  removed; a blocked "MSShift import" user as WrittenBy/CreatedBy with original names kept in *Other fields; map types,
+  locations, departments by name (list cleanup in docs/phase1-lists.md + docs/phase2-lists.md); status Pending->Draft,
+  Closed/Locked->Approved, Deleted->Voided.
