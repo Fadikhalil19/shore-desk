@@ -15,8 +15,15 @@ Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("sta
 - FIRST THING NEXT SESSION: the background mover died with the old session. Move any
   %USERPROFILE%\Downloads\msshift-events-*.json into C:\DeskData\import\msshift\events (never leave them in Downloads),
   check every month 2020-10..2026-10 is there, and re-run missing months (remove them from __msxEventsDone first).
-- Then: read out the rest (keys, visitors, lockers, parking, lost & found, packages, handover notes, on duty, incident
-  photos/PDF attachments), write the importer (tools/, test on a copy DB), and ASK FADI before loading into the live DB.
+- 2026-10-21 evening: the old run had died after 2025-07; restarted in a new Claude tab group (MSShift tab), months
+  2025-06 and 2025-05 done with 0 failures, continuing back to 2020-10.
+- INCIDENT IMPORTER DONE 2026-10-21 (commit c2b30c8): python -I tools/msshift-import/parse_incidents.py, then
+  dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents. Test copy DB "DeskImportTest" (restored
+  from a COPY_ONLY backup of Desk) holds all 807 reports: SHO 661 / OVH 98 / SMH 48, Approved 783 / Voided 9 / Draft 15,
+  56 locations kept as text, 31 employee departments not matched, inactive list entries added. NOT in the live DB.
+- Then: event-log importer (once the read-out finishes), read out the rest (keys, visitors, lockers, parking, lost &
+  found, packages, handover notes, on duty, incident photos/PDF attachments), and ASK FADI before loading into the
+  live DB (tool refuses "Desk" without --live).
 - Codex plugin: Fadi asked 2026-10-21 about openai/codex-plugin-cc for code reviews; Claude read it (see memory
   codex-plugin-review). Not installed yet; Fadi installs it himself (slash commands + !codex login) if he wants it.
 - Remind Fadi when the read-out is done: set Chrome "Automatic downloads" for msshift-security-2.com back to Ask.
