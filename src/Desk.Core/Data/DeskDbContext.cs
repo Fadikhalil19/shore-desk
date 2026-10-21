@@ -136,6 +136,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.Property(x => x.DetailsJson).HasMaxLength(-1);
             e.Property(x => x.ReviewNote).HasMaxLength(1000);
             e.Property(x => x.VoidReason).HasMaxLength(1000);
+            e.Property(x => x.LegacyRef).HasMaxLength(60);
+            e.HasIndex(x => x.LegacyRef);
             e.HasIndex(x => x.OccurredLocal);
             e.HasIndex(x => new { x.Status, x.SupervisorId });
             e.HasIndex(x => x.WrittenById);
@@ -170,6 +172,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.Property(x => x.RelatesToRoom).HasMaxLength(40);
             e.Property(x => x.Narrative).HasMaxLength(-1);
             e.Property(x => x.VoidReason).HasMaxLength(1000);
+            e.Property(x => x.LegacyRef).HasMaxLength(60);
+            e.HasIndex(x => x.LegacyRef);
             e.HasIndex(x => x.StartedLocal);
             e.HasIndex(x => new { x.CompletedLocal, x.HotelId });
             e.HasOne(x => x.Hotel).WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);

@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Desk.Api\Desk.Api.csproj" />
     <ProjectReference Include="..\..\src\Desk.Scheduler\Desk.Scheduler.csproj" />
+    <ProjectReference Include="..\..\tools\MsShiftImport\MsShiftImport.csproj" />
   </ItemGroup>
 
 </Project>

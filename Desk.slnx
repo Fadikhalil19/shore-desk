@@ -4,6 +4,9 @@
     <Project Path="src/Desk.Core/Desk.Core.csproj" />
     <Project Path="src/Desk.Scheduler/Desk.Scheduler.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/MsShiftImport/MsShiftImport.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Desk.Api.Tests/Desk.Api.Tests.csproj" />
   </Folder>

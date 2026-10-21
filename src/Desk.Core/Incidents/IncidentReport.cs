@@ -69,6 +69,10 @@ public class IncidentReport
     // Shown on the handover of the shift it happened in.
     public bool ForHandover { get; set; }
 
+    // Set on rows brought over from MSShift ("MSShift IR 1234"), so an import can be
+    // found, checked and taken out again. Null for everything entered in Shore Desk.
+    public string? LegacyRef { get; set; }
+
     public List<IncidentAttachment> Attachments { get; set; } = [];
 }
 
