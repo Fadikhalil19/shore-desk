@@ -5,6 +5,7 @@ using Desk.Core.Keys;
 using Desk.Core.LostFound;
 using Desk.Core.OnDuty;
 using Desk.Core.Packages;
+using Desk.Core.Patrol;
 using Desk.Core.Spaces;
 using Desk.Core.Visitors;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,11 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
     public DbSet<LostReport> LostReports => Set<LostReport>();
     public DbSet<Shipment> Shipments => Set<Shipment>();
     public DbSet<Package> Packages => Set<Package>();
+    public DbSet<Checkpoint> Checkpoints => Set<Checkpoint>();
+    public DbSet<PatrolRoute> PatrolRoutes => Set<PatrolRoute>();
+    public DbSet<RouteStop> RouteStops => Set<RouteStop>();
+    public DbSet<PatrolRound> PatrolRounds => Set<PatrolRound>();
+    public DbSet<CheckpointScan> CheckpointScans => Set<CheckpointScan>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder b)
     {
@@ -433,6 +439,46 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.NotifiedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.ClosedById).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.CreatedById).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<Checkpoint>(e =>
+        {
+            e.Property(x => x.Code).HasMaxLength(20);
+            e.HasIndex(x => x.Code).IsUnique();
+            e.Property(x => x.Name).HasMaxLength(100);
+            e.Property(x => x.Instructions).HasMaxLength(400);
+            e.HasIndex(x => new { x.HotelId, x.Name }).IsUnique();
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(x => x.Area).WithMany().HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<PatrolRoute>(e =>
+        {
+            e.Property(x => x.Name).HasMaxLength(100);
+            e.HasIndex(x => new { x.HotelId, x.Name }).IsUnique();
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasMany(x => x.Stops).WithOne().HasForeignKey(s => s.RouteId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<RouteStop>(e =>
+        {
+            e.HasOne(x => x.Checkpoint).WithMany().HasForeignKey(x => x.CheckpointId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<PatrolRound>(e =>
+        {
+            e.Property(x => x.Notes).HasMaxLength(1000);
+            e.HasIndex(x => new { x.HotelId, x.StartedLocal });
+            e.HasIndex(x => new { x.OfficerId, x.Status });
+            e.HasOne(x => x.Route).WithMany().HasForeignKey(x => x.RouteId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.OfficerId).OnDelete(DeleteBehavior.Restrict);
+        });
+        m.Entity<CheckpointScan>(e =>
+        {
+            e.Property(x => x.Note).HasMaxLength(1000);
+            e.HasIndex(x => new { x.HotelId, x.ScannedLocal });
+            e.HasIndex(x => x.RoundId);
+            e.HasOne(x => x.Checkpoint).WithMany().HasForeignKey(x => x.CheckpointId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<PatrolRound>().WithMany().HasForeignKey(x => x.RoundId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.OfficerId).OnDelete(DeleteBehavior.Restrict);
         });
         m.Entity<IncidentReport>().HasIndex(x => new { x.ForHandover, x.OccurredLocal });
         m.Entity<SecurityEvent>().HasIndex(x => new { x.ForHandover, x.StartedLocal });
