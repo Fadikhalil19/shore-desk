@@ -147,3 +147,11 @@ Design note: build ONE incident record with a form type + optional sections, not
   2020-10-22..2022-10-21: 358 | 2022-10-22..2024-10-21: 231 | 2024-10-21..2026-10-21: 208  => about 797 in 6 years.
   Last 2 years by form: IR 43.8%, GAI 13.0%, EAI 24.0%, MD 16.8%, HI 2.4%.
 - Records older than 6 years: not reachable through report searches; check whether record view pages still open them.
+- READ-OUT DONE 2026-10-21 for incident reports (all statuses incl. deleted, 6 years): IR 415, GAI 80, EAI 161, MD 116,
+  HI 35 = 807 report pages, 0 failures. Files in C:\DeskData\import\msshift\msshift-incidents-<form>.json (not in Git).
+  Detailed Search per form: /d/EventLog/IncidentReport/{IncidentReport/Search/SearchIncident | LiabilityIncident/Search/
+  SearchLiability | AidedAssociate/Search/SearchAidedAssociate | MissingDamage/Search/SearchMissingProperty |
+  Arrest/Search/SearchArrest}; results page has PageSize=ALL; each record opens via OpenWindowH('.../Incident_View?Result_qry=<token>').
+- Chrome: the MSShift site needs "Automatic downloads = Allow" for more than one file; Fadi set it 2026-10-21 - set it
+  back to Ask when the read-out is finished. Still to read out: event log, keys, visitors, lockers, parking, lost & found,
+  packages, handover, on duty, incident photos/videos (camera/video icons on report pages).
