@@ -180,8 +180,17 @@ public partial class Importer(DeskDbContext db)
 
     public static bool IsYes(string? s) => s?.Trim().StartsWith("Y", StringComparison.OrdinalIgnoreCase) == true;
 
-    public static async Task<(int incidents, int events)> RemoveAsync(DeskDbContext db)
+    public static async Task<(int incidents, int events)> RemoveAsync(DeskDbContext db, string? storageRoot = null)
     {
+        // Attachments of imported reports first (rows and their copied files).
+        var imported = db.Incidents.Where(r => r.LegacyRef != null && r.LegacyRef.StartsWith(RefPrefix)).Select(r => r.Id);
+        if (storageRoot is not null)
+            foreach (var id in await imported.ToListAsync())
+            {
+                var dir = Path.Combine(storageRoot, "incidents", id.ToString());
+                if (Directory.Exists(dir)) Directory.Delete(dir, true);
+            }
+        await db.IncidentAttachments.Where(a => imported.Contains(a.IncidentId)).ExecuteDeleteAsync();
         var incidents = await db.Incidents.Where(r => r.LegacyRef != null && r.LegacyRef.StartsWith(RefPrefix)).ExecuteDeleteAsync();
         var events = await db.Events.Where(e => e.LegacyRef != null && e.LegacyRef.StartsWith(RefPrefix)).ExecuteDeleteAsync();
         return (incidents, events);

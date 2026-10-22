@@ -7,7 +7,7 @@ namespace MsShiftImport;
 // under C:\DeskData\import\msshift\parsed (made by tools/msshift-import/*.py) and prints
 // COUNTS ONLY - the records hold injuries, birth dates and addresses.
 //
-//   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents --events
+//   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents --events --attachments
 //   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --remove
 //
 // The live database "Desk" also needs --live (Fadi says when). Every imported row has
@@ -18,9 +18,9 @@ public static class Cli
     {
         var opts = args.ToHashSet(StringComparer.OrdinalIgnoreCase);
         var dbName = ArgAfter(args, "--db");
-        if (dbName is null || !(opts.Contains("--incidents") || opts.Contains("--events") || opts.Contains("--remove")))
+        if (dbName is null || !(opts.Contains("--incidents") || opts.Contains("--events") || opts.Contains("--attachments") || opts.Contains("--remove")))
         {
-            Console.WriteLine("Usage: MsShiftImport --db <database> (--incidents | --events | --remove) [--live]");
+            Console.WriteLine("Usage: MsShiftImport --db <database> (--incidents | --events | --attachments | --remove) [--live] [--storage <folder>]");
             return 2;
         }
         var live = string.Equals(dbName, "Desk", StringComparison.OrdinalIgnoreCase);
@@ -31,6 +31,9 @@ public static class Cli
         }
 
         var parsed = ArgAfter(args, "--parsed") ?? @"C:\DeskData\import\msshift\parsed";
+        // Attachments are copied into the app's upload folder; a test database gets its own
+        // folder so its report ids never mix with the live app's files.
+        var storage = ArgAfter(args, "--storage") ?? (live ? @"C:\DeskData\files" : @"C:\DeskData\import\test-files");
         var options = new DbContextOptionsBuilder<DeskDbContext>()
             .UseSqlServer($@"Server=localhost\SQLEXPRESS;Database={dbName};Trusted_Connection=True;TrustServerCertificate=True;Encrypt=True")
             .Options;
@@ -50,7 +53,7 @@ public static class Cli
 
         if (opts.Contains("--remove"))
         {
-            var n = await Importer.RemoveAsync(db);
+            var n = await Importer.RemoveAsync(db, storage);
             Console.WriteLine($"Removed {n.incidents} imported incident reports and {n.events} imported events from {dbName}.");
             return 0;
         }
@@ -65,6 +68,11 @@ public static class Cli
         if (opts.Contains("--events"))
         {
             var result = await new EventImport(importer).RunAsync(Path.Combine(parsed, "events"));
+            result.Print();
+        }
+        if (opts.Contains("--attachments"))
+        {
+            var result = await new AttachmentImport(importer, storage).RunAsync(@"C:\DeskData\import\msshift\files");
             result.Print();
         }
         return 0;

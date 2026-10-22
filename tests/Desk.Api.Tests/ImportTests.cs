@@ -35,6 +35,8 @@ public class ImportTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, IA
     public async Task Imports_maps_and_removes_again()
     {
         var file = Path.Combine(Path.GetTempPath(), $"msshift-test-{Guid.NewGuid():N}.json");
+        var files = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"msshift-files-{Guid.NewGuid():N}")).FullName;
+        var storage = Path.Combine(Path.GetTempPath(), $"msshift-storage-{Guid.NewGuid():N}");
         await File.WriteAllTextAsync(file, Parsed);
         try
         {
@@ -97,19 +99,40 @@ public class ImportTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, IA
                 Assert.Equal(HttpStatusCode.OK, view.StatusCode);
             }
 
-            // Running it again adds nothing; --remove takes the import out.
+            // Photos / PDFs read out of MSShift become attachments of the imported report.
+            await File.WriteAllBytesAsync(Path.Combine(files, "IR-90001-photo1.jpg"), [0xFF, 0xD8, 0xFF, 0xE0, 1, 2, 3]);
+            await File.WriteAllBytesAsync(Path.Combine(files, "IR-90001-pdf1.pdf"), "%PDF-1.4 test"u8.ToArray());
+            await File.WriteAllBytesAsync(Path.Combine(files, "IR-99999-photo1.jpg"), [0xFF, 0xD8]);   // no such report
+            await using (var db = app.Db())
+            {
+                var imp = new Importer(db);
+                await imp.PrepareAsync();
+                var res = await new AttachmentImport(imp, storage).RunAsync(files);
+                Assert.Equal(2, res.Added);
+                Assert.Equal(1, res.NoReport);
+                Assert.Equal(0, (await new AttachmentImport(imp, storage).RunAsync(files)).Added);   // rerun adds nothing
+                var ir = await db.Incidents.SingleAsync(r => r.LegacyRef == "MSShift IR 90001");
+                var atts = await db.IncidentAttachments.Where(a => a.IncidentId == ir.Id).OrderBy(a => a.FileName).ToListAsync();
+                Assert.Equal(["MSShift pdf1.pdf", "MSShift photo1.jpg"], atts.Select(a => a.FileName));
+                Assert.True(File.Exists(Path.Combine(storage, "incidents", ir.Id.ToString(), atts[1].StoredName)));
+            }
+
+            // Running it again adds nothing; --remove takes the import out (attachments and their files too).
             await using (var db = app.Db())
             {
                 var imp = new Importer(db);
                 await imp.PrepareAsync();
                 Assert.Equal(0, (await new IncidentImport(imp).RunAsync(file)).Added);
-                Assert.Equal(3, (await Importer.RemoveAsync(db)).incidents);
+                Assert.Equal(3, (await Importer.RemoveAsync(db, storage)).incidents);
                 Assert.False(await db.Incidents.AnyAsync(r => r.LegacyRef != null));
+                Assert.Empty(Directory.GetDirectories(Path.Combine(storage, "incidents")));
             }
         }
         finally
         {
             File.Delete(file);
+            Directory.Delete(files, true);
+            if (Directory.Exists(storage)) Directory.Delete(storage, true);
         }
     }
 
