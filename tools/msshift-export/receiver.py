@@ -22,6 +22,8 @@ ORIGIN = "https://msshift-security-2.com"
 PORT = 8765
 KEY = secrets.token_urlsafe(16)
 MAX_BYTES = 60 * 1024 * 1024
+DATA_MODULES = {"found", "onduty", "callout"}
+MAX_DATA_BYTES = 200 * 1024 * 1024
 TYPES = {"image/jpeg": "jpg", "image/png": "png", "image/gif": "gif", "application/pdf": "pdf", "video/mp4": "mp4"}
 
 
@@ -90,11 +92,19 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(403)
         if self.path == "/list":
             return self.reply(200, {"items": todo(), "done": done_ids()})
+        m = re.fullmatch(r"/data/([a-z]+)", self.path)
+        if m and m.group(1) in DATA_MODULES:
+            folder = f"{SRC}/{m.group(1)}"
+            months = sorted(re.search(r"(\d{4}-\d{2})", p).group(1) for p in glob.glob(f"{folder}/{m.group(1)}-*.json"))
+            return self.reply(200, {"months": months})
         return self.reply(404)
 
     def do_POST(self):
         if not self.allowed():
             return self.reply(403)
+        d = re.fullmatch(r"/data/([a-z]+)/(\d{4}-\d{2})", self.path)
+        if d:
+            return self.save_data(d.group(1), d.group(2))
         m = re.fullmatch(r"/file/([A-Za-z]+-[A-Za-z0-9#\-]+-(?:photo|pdf)\d+)", self.path)
         size = int(self.headers.get("Content-Length") or 0)
         ctype = (self.headers.get("X-Source-Type") or "").split(";")[0].strip().lower()
@@ -112,6 +122,22 @@ class Handler(BaseHTTPRequestHandler):
         return self.reply(200, {"ok": True})
 
     saved = 0
+
+    def save_data(self, name, month):
+        """One month of a module (search result page + detail pages) as JSON."""
+        size = int(self.headers.get("Content-Length") or 0)
+        if name not in DATA_MODULES or size <= 0 or size > MAX_DATA_BYTES:
+            return self.reply(400, {"error": "bad request"})
+        data = self.rfile.read(size)
+        try:
+            parsed = json.loads(data)
+        except ValueError:
+            return self.reply(400, {"error": "not json"})
+        os.makedirs(f"{SRC}/{name}", exist_ok=True)
+        with open(f"{SRC}/{name}/{name}-{month}.json", "wb") as f:
+            f.write(data)
+        print(f"{name} {month}: listed {parsed.get('listed')}, records {len(parsed.get('records') or [])}", flush=True)
+        return self.reply(200, {"ok": True})
 
 
 if __name__ == "__main__":
