@@ -29,6 +29,10 @@ Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("sta
   session) + files.js in the MSShift tab -> C:\DeskData\import\msshift\files. If it stopped: start
   `python -I tools/msshift-export/receiver.py` (prints a new key), re-inject files.js, __msxfRun('<key>') - saved
   files are skipped. Importer: MsShiftImport --attachments (commit 3475624).
+- Fadi 2026-10-21: "skip keys visitors packages, we don't use them" -> no read-out/import for those (MSShift searches
+  found 0 records anyway). Shore Desk Keys/Visitors/Packages start empty.
+- NEXT READ-OUT: modules.js (lost & found found/returned with detail pages, on duty, call outs) -> receiver ->
+  C:\DeskData\import\msshift\<module>\. Start after the photo/PDF copy finishes (max 2 streams on MSShift).
 - Then: read out the rest (keys, visitors, lockers, parking, lost &
   found, packages, handover notes, on duty, incident photos/PDF attachments), and ASK FADI before loading into the
   live DB (tool refuses "Desk" without --live).
