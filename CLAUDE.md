@@ -21,7 +21,11 @@ Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("sta
   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents. Test copy DB "DeskImportTest" (restored
   from a COPY_ONLY backup of Desk) holds all 807 reports: SHO 661 / OVH 98 / SMH 48, Approved 783 / Voided 9 / Draft 15,
   56 locations kept as text, 31 employee departments not matched, inactive list entries added. NOT in the live DB.
-- Then: event-log importer (once the read-out finishes), read out the rest (keys, visitors, lockers, parking, lost &
+- EVENT IMPORTER DONE 2026-10-21 (commit 431c7d6): python -I tools/msshift-import/parse_events.py, then
+  MsShiftImport --events. Tested on DeskImportTest with the 21 months read so far (21,547 events, 52 inactive
+  categories added, 156 left-open events closed by the import with a note). Re-run both scripts when the read-out
+  finishes (reruns skip what is already there).
+- Then: read out the rest (keys, visitors, lockers, parking, lost &
   found, packages, handover notes, on duty, incident photos/PDF attachments), and ASK FADI before loading into the
   live DB (tool refuses "Desk" without --live).
 - Codex plugin: Fadi asked 2026-10-21 about openai/codex-plugin-cc for code reviews; Claude read it (see memory
