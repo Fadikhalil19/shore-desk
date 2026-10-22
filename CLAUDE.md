@@ -25,6 +25,10 @@ Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("sta
   MsShiftImport --events. Tested on DeskImportTest with the 21 months read so far (21,547 events, 52 inactive
   categories added, 156 left-open events closed by the import with a note). Re-run both scripts when the read-out
   finishes (reruns skip what is already there).
+- PHOTOS/PDFs READ-OUT RUNNING 2026-10-21 (2086 photos + 777 PDFs): receiver.py (127.0.0.1:8765, dies with the
+  session) + files.js in the MSShift tab -> C:\DeskData\import\msshift\files. If it stopped: start
+  `python -I tools/msshift-export/receiver.py` (prints a new key), re-inject files.js, __msxfRun('<key>') - saved
+  files are skipped. Importer: MsShiftImport --attachments (commit 3475624).
 - Then: read out the rest (keys, visitors, lockers, parking, lost &
   found, packages, handover notes, on duty, incident photos/PDF attachments), and ASK FADI before loading into the
   live DB (tool refuses "Desk" without --live).
