@@ -18,6 +18,7 @@ public partial class Importer(DeskDbContext db)
     public int ImportUserId { get; private set; }
     public Dictionary<string, int> Hotels { get; } = new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string, Dictionary<string, int>> lists = [];
+    readonly Dictionary<string, List<(string Key, int Id)>> activeNames = [];
     readonly Dictionary<string, int> departments = [];
     readonly List<(int Id, int? HotelId, string Key)> areas = [];
     readonly Dictionary<(int AreaId, string Key), int> spots = [];
@@ -46,6 +47,11 @@ public partial class Importer(DeskDbContext db)
         {
             if (!lists.TryGetValue(item.ListKey, out var map)) lists[item.ListKey] = map = [];
             map.TryAdd(Key(item.Name), item.Id);
+            if (item.IsActive)
+            {
+                if (!activeNames.TryGetValue(item.ListKey, out var names)) activeNames[item.ListKey] = names = [];
+                names.Add((Key(item.Name), item.Id));
+            }
         }
         foreach (var d in await Db.Departments.ToListAsync()) departments.TryAdd(Key(d.Name), d.Id);
         foreach (var a in await Db.LocationAreas.ToListAsync()) areas.Add((a.Id, a.HotelId, Key(a.Name)));
@@ -70,6 +76,18 @@ public partial class Importer(DeskDbContext db)
         map[Key(name)] = item.Id;
         NewListItems[listKey] = NewListItems.GetValueOrDefault(listKey) + 1;
         return item.Id;
+    }
+
+    // The active entry whose name the text starts with ("Guest Assist Luggage" -> "Guest Assist"),
+    // longest name first; otherwise the text itself, added switched off.
+    public int? ListIdByStart(string listKey, string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return null;
+        var key = Key(text);
+        var best = activeNames.TryGetValue(listKey, out var names)
+            ? names.Where(n => n.Key.Length > 0 && key.StartsWith(n.Key)).OrderByDescending(n => n.Key.Length).Select(n => (int?)n.Id).FirstOrDefault()
+            : null;
+        return best ?? ListId(listKey, text);
     }
 
     // MSShift department names carried a hotel prefix ("SHO-Housekeeping").

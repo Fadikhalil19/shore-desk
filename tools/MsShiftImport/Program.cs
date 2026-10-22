@@ -7,7 +7,7 @@ namespace MsShiftImport;
 // under C:\DeskData\import\msshift\parsed (made by tools/msshift-import/*.py) and prints
 // COUNTS ONLY - the records hold injuries, birth dates and addresses.
 //
-//   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents
+//   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents --events
 //   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --remove
 //
 // The live database "Desk" also needs --live (Fadi says when). Every imported row has
@@ -18,9 +18,9 @@ public static class Cli
     {
         var opts = args.ToHashSet(StringComparer.OrdinalIgnoreCase);
         var dbName = ArgAfter(args, "--db");
-        if (dbName is null || !(opts.Contains("--incidents") || opts.Contains("--remove")))
+        if (dbName is null || !(opts.Contains("--incidents") || opts.Contains("--events") || opts.Contains("--remove")))
         {
-            Console.WriteLine("Usage: MsShiftImport --db <database> (--incidents | --remove) [--live]");
+            Console.WriteLine("Usage: MsShiftImport --db <database> (--incidents | --events | --remove) [--live]");
             return 2;
         }
         var live = string.Equals(dbName, "Desk", StringComparison.OrdinalIgnoreCase);
@@ -60,6 +60,11 @@ public static class Cli
         if (opts.Contains("--incidents"))
         {
             var result = await new IncidentImport(importer).RunAsync(Path.Combine(parsed, "incidents.json"));
+            result.Print();
+        }
+        if (opts.Contains("--events"))
+        {
+            var result = await new EventImport(importer).RunAsync(Path.Combine(parsed, "events"));
             result.Print();
         }
         return 0;

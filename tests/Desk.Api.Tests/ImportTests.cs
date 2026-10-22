@@ -112,4 +112,63 @@ public class ImportTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, IA
             File.Delete(file);
         }
     }
+
+    const string ParsedEvents = """
+    [
+      {"number":"EV#24-0001","category":"Guest Assist Luggage","locationType":"SH A Building 1st Floor",
+       "locationDetail":"Test Spot","shift":"Afternoon","priority":"High","started":"2024-05-01T14:05",
+       "completed":"2024-05-01T14:30","enteredBy":"Sam Officer","assignedTo":"Lee Boss (Safety)",
+       "requested":"2024-05-01T14:00","requestedByName":"Pat Example","requestedByType":"Guest","requestedByDetail":"Room 101"},
+      {"number":"EV#24-0002","category":"Totally New Thing","locationType":"OVH","started":"2024-05-02T23:00",
+       "priority":"Low","narrative":"Made-up narrative."}
+    ]
+    """;
+
+    [Fact]
+    public async Task Imports_events_closes_old_open_ones()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), $"msshift-events-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(dir);
+        await File.WriteAllTextAsync(Path.Combine(dir, "events-2024-05.json"), ParsedEvents);
+        try
+        {
+            await using (var db = app.Db())
+            {
+                var imp = new Importer(db);
+                await imp.PrepareAsync();
+                Assert.Equal(2, (await new EventImport(imp).RunAsync(dir)).Added);
+            }
+
+            await using (var db = app.Db())
+            {
+                var rows = await db.Events.Include(e => e.Category).Include(e => e.Hotel).Include(e => e.Area)
+                    .Where(e => e.LegacyRef!.StartsWith("MSShift EV#24-")).OrderBy(e => e.LegacyRef).ToListAsync();
+                var a = rows[0];
+                Assert.Equal("Guest Assist", a.Category.Name);           // matched by the start of the text
+                Assert.Equal("Guest Assist Luggage", a.Detail);          // full MSShift text kept
+                Assert.Equal("A Building 1st Floor", a.Area!.Name);
+                Assert.Equal(Desk.Core.Events.Priority.High, a.Priority);
+                Assert.Equal(Shift.Afternoon, a.Shift);
+                Assert.Equal("Guest", a.RequestedByType);
+                Assert.Equal("Pat Example (Room 101)", a.RequestedByName);
+                Assert.Contains("Entered by (MSShift): Sam Officer", a.Narrative);
+
+                var b = rows[1];
+                Assert.Equal("OVH", b.Hotel.Code);
+                Assert.False(b.Category.IsActive);                       // unknown category added switched off
+                Assert.Equal(b.StartedLocal, b.CompletedLocal);          // left open in MSShift -> closed
+                Assert.Contains("Still open in MSShift", b.Narrative);
+
+                var view = await app.Admin().GetAsync($"/api/events/{a.Id}");
+                Assert.Equal(HttpStatusCode.OK, view.StatusCode);
+            }
+
+            await using (var db = app.Db())
+                Assert.Equal(2, (await Importer.RemoveAsync(db)).events);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
 }
