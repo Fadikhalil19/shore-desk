@@ -155,3 +155,16 @@ Design note: build ONE incident record with a form type + optional sections, not
 - Chrome: the MSShift site needs "Automatic downloads = Allow" for more than one file; Fadi set it 2026-10-21 - set it
   back to Ask when the read-out is finished. Still to read out: event log, keys, visitors, lockers, parking, lost & found,
   packages, handover, on duty, incident photos/videos (camera/video icons on report pages).
+
+## Survey of the other modules (2026-10-21, read-only; counts only)
+- Menus: Keys /d/EventLog/Keys/... (Search/Key_View_Tab, ShiftInventory, AssignKey/TodaysKeys), Visitors
+  /d/EventLog/VisitorsNew/... (Search/Visitor_View_Tab, Schedule/...), Lockers + Parking = ShiftInventory_ pages
+  (Mens/Womens, Employee/Motorcycle Parking), Lost & Found /d/LostandFound/... (SearchFound/SearchFound = detailed
+  found/return search; Lost/Quick_Lost_Note; Ship/Ship_Info; LFReports/Storage, Disposal_Menu), Packages
+  /d/Packages/... (Incoming/search/PackageLog_Search, OutgoingShipping/..., Storage/Storage), On Duty
+  /d/EventLog/dispatch/Search/SearchOfficer, Call outs /d/EventLog/SickLog/Out_View_Tab, Handover /d/eventlog/PassLog/handover.
+- Search forms take dates as "MM/DD/YYYY hh:mm" in the two NewCal boxes (without the time an alert refuses).
+- Results 2024-10-22..2026-10-21: Lost & Found found/returned 3,179 (detail pages via OpenWindowH ->
+  Found/Expand_LOSTFOUND_Note and Return/Expand_Return_Note, PageSize=ALL); On Duty ~137/month and call outs
+  ~7/month (list only, no detail pages). Keys, Visitors, Incoming packages: 0 - either unused at Shore or the
+  search needs something else; ask Fadi / the safety team before spending more time.
