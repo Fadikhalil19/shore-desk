@@ -31,8 +31,13 @@ Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("sta
   files are skipped. Importer: MsShiftImport --attachments (commit 3475624).
 - Fadi 2026-10-21: "skip keys visitors packages, we don't use them" -> no read-out/import for those (MSShift searches
   found 0 records anyway). Shore Desk Keys/Visitors/Packages start empty.
-- NEXT READ-OUT: modules.js (lost & found found/returned with detail pages, on duty, call outs) -> receiver ->
-  C:\DeskData\import\msshift\<module>\. Start after the photo/PDF copy finishes (max 2 streams on MSShift).
+- 2026-10-23: photos/PDFs DONE (2,863, 0 failures). modules.js DONE: lost & found 73 months (8,574 pages),
+  on duty 11,428, call outs 382 -> C:\DeskData\import\msshift\{found,onduty,callout}. 2026-10 is partial: re-read
+  it at the end (delete found-2026-10.json etc. first). Parsers parse_found.py / parse_duty.py; importer
+  --found / --onduty (commits after 7631cb4). Test copy now holds 8,508 found items, 11,428 on duty, 382 call outs.
+- OPEN QUESTION FOR FADI: 3,233 imported found items from 2020-2025 are still "in storage" in MSShift (never closed
+  there) - probably long gone. Ask whether to import them as Disposed ("closed by the import") or as they are.
+- MSShift signs out when the account signs in elsewhere (?ErrLgnMsg=ALO); then Fadi signs in and Claude re-injects.
 - Then: read out the rest (keys, visitors, lockers, parking, lost &
   found, packages, handover notes, on duty, incident photos/PDF attachments), and ASK FADI before loading into the
   live DB (tool refuses "Desk" without --live).

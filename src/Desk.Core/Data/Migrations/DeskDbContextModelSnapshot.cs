@@ -3833,6 +3833,10 @@ namespace Desk.Core.Data.Migrations
                     b.Property<int>("HotelId")
                         .HasColumnType("int");
 
+                    b.Property<string>("LegacyRef")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
                     b.Property<string>("Name")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -3869,6 +3873,8 @@ namespace Desk.Core.Data.Migrations
 
                     b.HasIndex("DepartmentId");
 
+                    b.HasIndex("LegacyRef");
+
                     b.HasIndex("UserId");
 
                     b.HasIndex("HotelId", "ShiftDate", "Shift");
@@ -3898,6 +3904,10 @@ namespace Desk.Core.Data.Migrations
 
                     b.Property<int>("HotelId")
                         .HasColumnType("int");
+
+                    b.Property<string>("LegacyRef")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(200)
@@ -3936,6 +3946,8 @@ namespace Desk.Core.Data.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("DepartmentId");
+
+                    b.HasIndex("LegacyRef");
 
                     b.HasIndex("UserId");
 

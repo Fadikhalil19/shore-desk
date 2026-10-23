@@ -21,6 +21,7 @@ public class DutyAssignment
     public DateTime CreatedUtc { get; set; }
     public DateTime UpdatedUtc { get; set; }
     public DateTime? RemovedUtc { get; set; }
+    public string? LegacyRef { get; set; }               // set on rows brought over from MSShift ("MSShift OD#123")
 }
 
 // Someone calling out of a shift (sick call log).
@@ -41,6 +42,7 @@ public class CallOut
     public DateTime CreatedUtc { get; set; }
     public DateTime UpdatedUtc { get; set; }
     public DateTime? RemovedUtc { get; set; }
+    public string? LegacyRef { get; set; }               // set on rows brought over from MSShift ("MSShift OD#123")
 }
 
 public static class OnDutyRules

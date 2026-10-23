@@ -216,6 +216,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.Property(x => x.Name).HasMaxLength(200);
             e.Property(x => x.Radio).HasMaxLength(40);
             e.Property(x => x.Post).HasMaxLength(100);
+            e.Property(x => x.LegacyRef).HasMaxLength(60);
+            e.HasIndex(x => x.LegacyRef);
             e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift });
             e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne<AppUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
@@ -228,6 +230,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.Property(x => x.Reason).HasMaxLength(40);
             e.Property(x => x.Notes).HasMaxLength(1000);
             e.Property(x => x.CoveredBy).HasMaxLength(200);
+            e.Property(x => x.LegacyRef).HasMaxLength(60);
+            e.HasIndex(x => x.LegacyRef);
             e.HasIndex(x => new { x.HotelId, x.ShiftDate, x.Shift });
             e.HasIndex(x => x.UserId);
             e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);

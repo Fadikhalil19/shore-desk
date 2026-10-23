@@ -7,7 +7,7 @@ namespace MsShiftImport;
 // under C:\DeskData\import\msshift\parsed (made by tools/msshift-import/*.py) and prints
 // COUNTS ONLY - the records hold injuries, birth dates and addresses.
 //
-//   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents --events --attachments --found
+//   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --incidents --events --attachments --found --onduty
 //   dotnet run --project tools/MsShiftImport -- --db DeskImportTest --remove
 //
 // The live database "Desk" also needs --live (Fadi says when). Every imported row has
@@ -18,9 +18,9 @@ public static class Cli
     {
         var opts = args.ToHashSet(StringComparer.OrdinalIgnoreCase);
         var dbName = ArgAfter(args, "--db");
-        if (dbName is null || !(opts.Contains("--incidents") || opts.Contains("--events") || opts.Contains("--attachments") || opts.Contains("--found") || opts.Contains("--remove")))
+        if (dbName is null || !(opts.Contains("--incidents") || opts.Contains("--events") || opts.Contains("--attachments") || opts.Contains("--found") || opts.Contains("--onduty") || opts.Contains("--remove")))
         {
-            Console.WriteLine("Usage: MsShiftImport --db <database> (--incidents | --events | --attachments | --found | --remove) [--live] [--storage <folder>]");
+            Console.WriteLine("Usage: MsShiftImport --db <database> (--incidents | --events | --attachments | --found | --onduty | --remove) [--live] [--storage <folder>]");
             return 2;
         }
         var live = string.Equals(dbName, "Desk", StringComparison.OrdinalIgnoreCase);
@@ -54,7 +54,7 @@ public static class Cli
         if (opts.Contains("--remove"))
         {
             var n = await Importer.RemoveAsync(db, storage);
-            Console.WriteLine($"Removed {n.incidents} imported incident reports, {n.events} imported events and {n.found} imported found items from {dbName}.");
+            Console.WriteLine($"Removed {n.incidents} imported incident reports, {n.events} imported events, {n.found} imported found items and {n.duty} imported on duty / call out rows from {dbName}.");
             return 0;
         }
 
@@ -78,6 +78,11 @@ public static class Cli
         if (opts.Contains("--found"))
         {
             var result = await new FoundImport(importer).RunAsync(Path.Combine(parsed, "found.json"));
+            result.Print();
+        }
+        if (opts.Contains("--onduty"))
+        {
+            var result = await new DutyImport(importer).RunAsync(Path.Combine(parsed, "onduty.json"), Path.Combine(parsed, "callout.json"));
             result.Print();
         }
         return 0;

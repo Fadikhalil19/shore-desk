@@ -261,4 +261,46 @@ public class ImportTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, IA
             File.Delete(file);
         }
     }
+    [Fact]
+    public async Task Imports_on_duty_and_call_outs()
+    {
+        var dir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"msshift-duty-{Guid.NewGuid():N}")).FullName;
+        await File.WriteAllTextAsync(Path.Combine(dir, "onduty.json"), """
+        [{"number":"TD#991","name":"Sam Officer","shift":"Overnight","radio":"7 Test 2","post":"Overnight",
+          "start":"2025-06-02T01:00","end":"2025-06-02T05:00","enteredBy":"Lee Boss"},
+         {"number":"TD#992","name":"Robin Guard","shift":"Morning","post":"Pool deck","start":"2025-06-02T05:00","end":"2025-06-02T13:00"}]
+        """);
+        await File.WriteAllTextAsync(Path.Combine(dir, "callout.json"), """
+        [{"number":"TC#25-991","date":"2025-06-03T00:00","shift":"Afternoon","name":"Casey Worker","department":"Safety",
+          "reason":"Family Emergency","called":"2025-06-03T10:00","takenBy":"Lee Boss"},
+         {"number":"TC#25-992","date":"2025-06-04T00:00","shift":"Morning","name":"Jo Worker","reason":"Jury Duty"}]
+        """);
+        try
+        {
+            await using var db = app.Db();
+            var imp = new Importer(db);
+            await imp.PrepareAsync();
+            var res = await new DutyImport(imp).RunAsync(Path.Combine(dir, "onduty.json"), Path.Combine(dir, "callout.json"));
+            Assert.Equal(2, res.DutyAdded);
+            Assert.Equal(2, res.CallsAdded);
+            Assert.Equal(0, (await new DutyImport(imp).RunAsync(Path.Combine(dir, "onduty.json"), Path.Combine(dir, "callout.json"))).DutyAdded);
+
+            var night = await db.DutyAssignments.SingleAsync(d => d.LegacyRef == "MSShift TD#991");
+            Assert.Equal(new DateOnly(2025, 6, 1), night.ShiftDate);              // after midnight: the night before
+            Assert.Null(night.Post);                                              // post only repeated the shift
+            Assert.Equal("Pool deck", (await db.DutyAssignments.SingleAsync(d => d.LegacyRef == "MSShift TD#992")).Post);
+
+            var calls = await db.CallOuts.Where(c => c.LegacyRef!.StartsWith("MSShift TC#25-99")).OrderBy(c => c.LegacyRef).ToListAsync();
+            Assert.Equal("Family emergency", calls[0].Reason);
+            Assert.Contains("Taken by (MSShift): Lee Boss", calls[0].Notes);
+            Assert.Equal("Other", calls[1].Reason);
+            Assert.Contains("Reason in MSShift: Jury Duty", calls[1].Notes);
+
+            Assert.Equal(4, (await Importer.RemoveAsync(db)).duty);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
 }
