@@ -3516,6 +3516,10 @@ namespace Desk.Core.Data.Migrations
                     b.Property<int>("HotelId")
                         .HasColumnType("int");
 
+                    b.Property<string>("LegacyRef")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
                     b.Property<string>("LocationDetail")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -3589,6 +3593,8 @@ namespace Desk.Core.Data.Migrations
                     b.HasIndex("FoundByUserId");
 
                     b.HasIndex("FoundLocal");
+
+                    b.HasIndex("LegacyRef");
 
                     b.HasIndex("Number")
                         .IsUnique();

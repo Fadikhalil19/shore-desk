@@ -45,6 +45,7 @@ public class FoundItem
     public string? DisposalMethod { get; set; }          // LostFoundRules.DisposalMethods
     public string? CloseNote { get; set; }
     public bool ForHandover { get; set; }
+    public string? LegacyRef { get; set; }               // set on items brought over from MSShift ("MSShift F 26-0123")
     public int CreatedById { get; set; }
     public DateTime CreatedUtc { get; set; }
     public DateTime UpdatedUtc { get; set; }

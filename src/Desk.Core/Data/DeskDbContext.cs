@@ -369,6 +369,8 @@ public class DeskDbContext(DbContextOptions<DeskDbContext> options) : DbContext(
             e.Property(x => x.ReturnSignature).HasMaxLength(-1);
             e.Property(x => x.DisposalMethod).HasMaxLength(40);
             e.Property(x => x.CloseNote).HasMaxLength(1000);
+            e.Property(x => x.LegacyRef).HasMaxLength(60);
+            e.HasIndex(x => x.LegacyRef);
             e.HasIndex(x => new { x.HotelId, x.Status, x.PurgeDate });
             e.HasIndex(x => x.FoundLocal);
             e.HasOne<Hotel>().WithMany().HasForeignKey(x => x.HotelId).OnDelete(DeleteBehavior.Restrict);

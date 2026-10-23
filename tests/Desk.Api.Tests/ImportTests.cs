@@ -194,4 +194,71 @@ public class ImportTests(DeskAppFactory app) : IClassFixture<DeskAppFactory>, IA
             Directory.Delete(dir, true);
         }
     }
+
+    const string ParsedFound = """
+    [
+      {"number":"99-0001","site":"1515 Test Ave","category":"Clothing","detail":"Jacket","color":"Testy Teal",
+       "description":"Made-up jacket.","found":"2025-02-03T10:15","locationFound":"Guest Room, 305",
+       "foundByName":"Sam Finder","foundByDepartment":"SHO-Housekeeping","received":"2025-02-03T10:30",
+       "receivedBy":"Lee Desk","storage":"Shelf / B2","wantsItem":"No"},
+      {"number":"99-0002","category":"Phone","found":"2025-03-01T08:00","received":"2025-03-01T08:05",
+       "returned":"2025-03-02T12:00","returnTo":"Pat Owner","returnToType":"Guest","returnedBy":"Lee Desk"},
+      {"number":"99-0003","category":"Umbrella","found":"2025-01-01T08:00","returned":"2025-04-01T09:00",
+       "disposition":"Donated"},
+      {"number":"99-0004","category":"Bag","found":"2025-01-05T08:00","shipped":"2025-01-09T09:00",
+       "returnTo":"Jo Away","carrier":"UPS","shipCity":"Testville"},
+      {"category":"No number","found":"2025-01-05T08:00"}
+    ]
+    """;
+
+    [Fact]
+    public async Task Imports_found_items_with_their_outcome()
+    {
+        var file = Path.Combine(Path.GetTempPath(), $"msshift-found-{Guid.NewGuid():N}.json");
+        await File.WriteAllTextAsync(file, ParsedFound);
+        try
+        {
+            await using (var db = app.Db())
+            {
+                var imp = new Importer(db);
+                await imp.PrepareAsync();
+                var res = await new FoundImport(imp).RunAsync(file);
+                Assert.Equal(4, res.Added);
+                Assert.Equal(1, res.NoNumber);
+                Assert.Equal(0, (await new FoundImport(imp).RunAsync(file)).Added);    // rerun adds nothing
+            }
+
+            await using (var db = app.Db())
+            {
+                var rows = await db.FoundItems.Where(f => f.LegacyRef!.StartsWith("MSShift F 99-")).OrderBy(f => f.Number).ToListAsync();
+                Assert.Equal(["MS-99-0001", "MS-99-0002", "MS-99-0003", "MS-99-0004"], rows.Select(f => f.Number));
+
+                var kept = rows[0];
+                Assert.Equal(Desk.Core.LostFound.FoundStatus.InStorage, kept.Status);
+                Assert.Equal("305", kept.Room);
+                Assert.Equal(new DateOnly(2025, 5, 4), kept.PurgeDate);            // found + 90 days
+                Assert.Equal("Shelf / B2", kept.StorageLocation);
+                var housekeeping = await db.Departments.SingleAsync(x => x.Name == "Housekeeping");
+                Assert.Equal(housekeeping.Id, kept.FoundByDepartmentId);
+                Assert.Contains("Received by (MSShift): Lee Desk", kept.Notes);
+                Assert.False((await db.ListItems.SingleAsync(i => i.Id == kept.ColorId)).IsActive);
+
+                Assert.Equal(Desk.Core.LostFound.FoundStatus.ReturnedToOwner, rows[1].Status);
+                Assert.Equal("Pat Owner", rows[1].ReturnedToName);
+                Assert.Equal(Desk.Core.LostFound.FoundStatus.Disposed, rows[2].Status);
+                Assert.Equal("Donated", rows[2].DisposalMethod);
+                Assert.Equal(Desk.Core.LostFound.FoundStatus.Shipped, rows[3].Status);
+                Assert.Contains("UPS", rows[3].CloseNote);
+
+                var view = await app.Admin().GetAsync($"/api/lostfound/found/{kept.Id}");
+                Assert.Equal(HttpStatusCode.OK, view.StatusCode);
+
+                Assert.Equal(4, (await Importer.RemoveAsync(db)).found);
+            }
+        }
+        finally
+        {
+            File.Delete(file);
+        }
+    }
 }
