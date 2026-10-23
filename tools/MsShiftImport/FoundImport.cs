@@ -70,6 +70,10 @@ public class FoundImport(Importer imp)
 
     static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
+    // Fadi 2026-10-23: items found before 2026 that MSShift still shows in storage were never closed
+    // there and are long gone - they come in as disposed, closed by the import on their purge date.
+    public static readonly DateTime StaleBefore = new(2026, 1, 1);
+
     public async Task<Result> RunAsync(string file)
     {
         var res = new Result();
@@ -182,6 +186,14 @@ public class FoundImport(Importer imp)
             if (m.Room is not null) close.Add($"Room: {m.Room}");
             if (!string.IsNullOrWhiteSpace(m.ReturnNarrative)) close.Add(m.ReturnNarrative.Trim());
             item.CloseNote = Importer.Clean(string.Join("\n", close), 1000);
+        }
+        else if (found < StaleBefore)
+        {
+            item.Status = FoundStatus.Disposed;
+            item.DisposalMethod = "Other";
+            item.ClosedLocal = item.PurgeDate.ToDateTime(TimeOnly.MinValue);
+            item.ClosedById = imp.ImportUserId;
+            item.CloseNote = "Still in storage in MSShift when imported (found before 2026); closed by the import.";
         }
         notes.Add("Imported from MSShift.");
         item.Notes = Importer.Clean(string.Join("\n", notes), 2000);

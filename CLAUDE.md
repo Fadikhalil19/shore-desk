@@ -35,8 +35,9 @@ Started 2026-10-16 from the contract-app session. Plan approved 2026-10-16 ("sta
   on duty 11,428, call outs 382 -> C:\DeskData\import\msshift\{found,onduty,callout}. 2026-10 is partial: re-read
   it at the end (delete found-2026-10.json etc. first). Parsers parse_found.py / parse_duty.py; importer
   --found / --onduty (commits after 7631cb4). Test copy now holds 8,508 found items, 11,428 on duty, 382 call outs.
-- OPEN QUESTION FOR FADI: 3,233 imported found items from 2020-2025 are still "in storage" in MSShift (never closed
-  there) - probably long gone. Ask whether to import them as Disposed ("closed by the import") or as they are.
+- DECIDED 2026-10-23 (Fadi: "go with recommended"): found items from before 2026 that MSShift still shows in
+  storage come in as Disposed ("closed by the import", on their purge date). FoundImport.StaleBefore. Test copy:
+  Disposed 6407, Returned 1081, Shipped 370, In storage 650 (all 2026).
 - MSShift signs out when the account signs in elsewhere (?ErrLgnMsg=ALO); then Fadi signs in and Claude re-injects.
 - Then: read out the rest (keys, visitors, lockers, parking, lost &
   found, packages, handover notes, on duty, incident photos/PDF attachments), and ASK FADI before loading into the
